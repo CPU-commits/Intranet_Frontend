@@ -1,0 +1,45 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Inconsolata', monospace;
+    color: var(--color-dark);
+}
+
+body {
+    background-color: var(--color-main-light);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Karla', sans-serif;
+}
+
+button {
+    cursor: pointer;
+}
+
+.InvisibleButton {
+    background-color: transparent;
+    border: none;
+}
+
+/* Tables */
+.Tbody tr{
+    border-bottom: 1px var(--color-light) solid;
+}
+
+.Tbody td{
+    text-align: center;
+    padding: 15px;
+}
+
+:root {
+    --color-main: #5867e8;
+    --color-main-light: #f8faff;
+    --color-dark: #3d3d3d;
+    --color-light: rgba(132, 139, 200, 0.3);
+    --box-shadow: 0 2rem 3rem var(--color-light);
+    /* Toast */
+    --color-danger: #a70a1f;
+    --color-info: #1dc2e0;
+    --color-success: var(--color-main);
+}
