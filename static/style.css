@@ -22,6 +22,12 @@ button {
     border: none;
 }
 
+/* Modal */
+.Modal__open{
+    overflow-y: hidden !important;
+    overflow-x: hidden;
+}
+
 /* Tables */
 .Tbody tr{
     border-bottom: 1px var(--color-light) solid;
