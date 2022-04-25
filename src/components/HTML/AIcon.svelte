@@ -1,18 +1,18 @@
 <script lang="ts">
 	export let classItem: string
 	export let title = ''
-	export let clickFunction: any
+	export let href: string
 </script>
 
-<button {title} on:click={clickFunction} type="button"> <i class={classItem} /></button>
+<a {href} {title}> <i class={classItem} /></a>
 
 <style>
-	button {
+	a {
 		background: transparent;
 		border: none;
 	}
 
-	button:hover i {
+	a:hover i {
 		color: var(--color-main);
 	}
 

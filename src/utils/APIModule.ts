@@ -54,7 +54,7 @@ class APIModule {
         token?: string
     ): Promise<FetchResponse> {
         spinner.set(spinnerStatus)
-        if(token)
+        if (token)
             config.headers["access-token"] = token
         const response = await axios[method](URL, body, config)
             .then((res) =>{
@@ -69,6 +69,36 @@ class APIModule {
             })
         spinner.set(false)
         if(!response.success)
+            throw response
+        return response
+    }
+
+    async fetchDeleteData(
+        URL: string,
+        spinnerStatus = true,
+        token?: string,
+        config: HTTPConfig = {
+            headers: {
+                'content-type': 'application/json',
+            },
+        },
+    ): Promise<FetchResponse> {
+        spinner.set(spinnerStatus)
+        if(token)
+            config.headers["access-token"] = token
+        const response = await axios.delete(URL, config)
+            .then((res) =>{
+                return res.data
+            })
+            .catch(async (error: Error | AxiosError)=>{
+                if(axios.isAxiosError(error)){
+                    return await this.handleAxiosError(error)
+                }else{
+                    return this.handleUnexpectedError(error)
+                }
+            })
+        spinner.set(false)
+        if(!response.success && config.responseType !== 'arraybuffer')
             throw response
         return response
     }

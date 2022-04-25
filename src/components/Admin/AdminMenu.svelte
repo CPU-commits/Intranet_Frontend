@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { UserTypes } from '$models/users/user_type.model'
+
 	export let url: string
+	export let user_type: string
 </script>
 
 <menu class="AdminMenu">
@@ -14,9 +17,39 @@
 				<i class="fa-solid fa-chalkboard-user" /> Profesores
 			</li>
 		</a>
-		<a href="/admin/directivos">
-			<li class:Selected={url === '/admin/directivos'}>
-				<i class="fa-solid fa-user-tie" /> Directivos
+		{#if user_type === UserTypes.DIRECTOR}
+			<a href="/admin/directivos">
+				<li
+					class:Selected={url === '/admin/directivos' ||
+						url === '/admin/directivos/masivo'}
+				>
+					<i class="fa-solid fa-user-tie" /> Directivos
+				</li>
+			</a>
+		{/if}
+		<a href="/admin/cursos">
+			<li class:Selected={url === '/admin/cursos'}>
+				<i class="fa-solid fa-layer-group" /> Cursos
+			</li>
+		</a>
+		<a href="/admin/materias">
+			<li class:Selected={url === '/admin/materias'}>
+				<i class="fa-solid fa-book-bookmark" /> Materias
+			</li>
+		</a>
+		<a href="/admin/semestres">
+			<li>
+				<i class="fa-solid fa-calendar-days" /> Semestres
+			</li>
+		</a>
+		<a href="/admin/">
+			<li>
+				<i class="fa-solid fa-bezier-curve" /> Mapa
+			</li>
+		</a>
+		<a href="/admin/archivos">
+			<li class:Selected={url === '/admin/archivos'}>
+				<i class="fa-solid fa-cloud" /> Archivos
 			</li>
 		</a>
 		<a href="/admin/historico">

@@ -6,7 +6,7 @@
 	<thead>
 		<tr>
 			{#each header as tdElement}
-				<td>{tdElement}</td>
+				<td>{@html tdElement}</td>
 			{/each}
 		</tr>
 	</thead>

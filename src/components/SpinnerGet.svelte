@@ -1,30 +1,46 @@
-<div class="SpinnerGet">
-	<div class="Loader" />
+<div class="lds-ring">
+	<div />
+	<div />
+	<div />
+	<div />
 </div>
 
-<style lang="scss">
-	.SpinnerGet {
-		position: absolute;
+<style>
+	.lds-ring {
+		display: flex;
+		justify-content: center;
+		position: relative;
 		width: 100%;
-		height: 4px;
-		top: 0;
-		overflow: hidden;
+		height: 80px;
+		font-family: initial;
 	}
-
-	.Loader {
-		width: 100%;
-		height: 100%;
+	.lds-ring div {
+		box-sizing: border-box;
+		display: block;
 		position: absolute;
-		background: linear-gradient(45deg, #474bff, #d75ee5);
-		animation: load 3s ease-in-out infinite;
+		width: 64px;
+		height: 64px;
+		margin: 8px;
+		border: 8px solid var(--color-main);
+		border-radius: 50%;
+		animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+		border-color: var(--color-main) transparent transparent transparent;
 	}
-
-	@keyframes load {
+	.lds-ring div:nth-child(1) {
+		animation-delay: -0.45s;
+	}
+	.lds-ring div:nth-child(2) {
+		animation-delay: -0.3s;
+	}
+	.lds-ring div:nth-child(3) {
+		animation-delay: -0.15s;
+	}
+	@keyframes lds-ring {
 		0% {
-			left: -100%;
+			transform: rotate(0deg);
 		}
 		100% {
-			left: 100%;
+			transform: rotate(360deg);
 		}
 	}
 </style>
