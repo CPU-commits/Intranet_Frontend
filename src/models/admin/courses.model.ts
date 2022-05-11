@@ -4,16 +4,17 @@ import type { Subject } from "./subjects.model"
 
 export interface Section {
     section: string
-    subjects: Subject[]
+    course: Course
+    header_teacher: User | string
     _id: string
 }
 
 export interface Course {
     _id: string
     course: string
-    header_teacher: User
     level: number
     sections: Array<Section>
     cycle: Cycle
+    subjects: Subject[]
     isFinal: boolean | string
 }
