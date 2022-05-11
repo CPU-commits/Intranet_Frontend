@@ -239,7 +239,7 @@
 <Panel>
 	<Icons slot="nav">
 		<ButtonIcon
-			title={'Agregar directivos'}
+			title={'Agregar directivo'}
 			clickFunction={toggleModal}
 			classItem={'fa-solid fa-user-plus'}
 		/>

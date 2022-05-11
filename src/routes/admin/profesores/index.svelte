@@ -20,12 +20,14 @@
 	import Form from '$components/HTML/Form.svelte'
 	import Input from '$components/HTML/Input.svelte'
 	import Search from '$components/HTML/Search.svelte'
+	import Select from '$components/HTML/Select.svelte'
 	import Table from '$components/HTML/Table.svelte'
 	import TextArea from '$components/HTML/TextArea.svelte'
 	import Modal from '$components/Modal.svelte'
 	import SpinnerGet from '$components/SpinnerGet.svelte'
 	import { variables } from '$lib/variables'
-	import type { Directives } from '$models/admin/Directive.model'
+	import type { Course } from '$models/admin/courses.model'
+	import type { Teacher, Teachers } from '$models/admin/teacher.model'
 	import type { User } from '$models/users/users.model'
 	import { addToast } from '$stores/toasts'
 	import API from '$utils/APIModule'
@@ -39,42 +41,52 @@
 	const LIMIT = 30
 	// Modal
 	let modal = false
+	let modalSubjects = false
 	let modalEdit = false
 	let modalStatus = false
 	const toggleModal = () => (modal = !modal)
 	const toggleModalEdit = () => (modalEdit = !modalEdit)
+	const toggleSubjects = () => (modalSubjects = !modalSubjects)
 	const toggleModalStatus = () => {
 		modalStatus = !modalStatus
 		modalEdit = false
 	}
 	// Form
-	let formDirective = {
+	let formTeacher = {
 		name: '',
 		first_lastname: '',
 		second_lastname: '',
 		rut: '',
 	}
+	let subject = ''
 	// Change status
 	let why = ''
 	// Data
-	let directives: Directives
-	let directiveEdit: User
-	let directivePosition: number
+	let teachers: Teachers
+	let courses: Course[]
+	// Form edit
+	let teacherEdit: Teacher
+	let teacherPosition: number
 
 	onMount(async () => {
 		try {
-			const data = await getTeachers(true, 0)
-			directives = data.body
-			onscrollLoading(directives.total, async (n: number) => {
+			const data = await Promise.all([
+				getTeachers(true, 0),
+				API.fetchGetData(`${variables.API}/api/course/get_courses`, false, token),
+			])
+			teachers = data[0].body
+			courses = data[1].body.courses
+			console.log(courses)
+			onscrollLoading(teachers.total, async (n: number) => {
 				runningLoading = true
 				try {
 					const dataFetch = await getTeachers(false, n)
-					directives.users = [...directives.users, ...dataFetch.body.users]
+					teachers.users = [...teachers.users, ...dataFetch.body.users]
 					runningLoading = false
 					return n + LIMIT
 				} catch (err) {
 					runningLoading = false
-					directives = {
+					teachers = {
 						users: [],
 					}
 					addToast({
@@ -85,7 +97,7 @@
 				}
 			})
 		} catch (err) {
-			directives = {
+			teachers = {
 				users: [],
 			}
 			addToast({
@@ -103,36 +115,40 @@
 		return data
 	}
 
+	let timeout: any
 	async function searchFunction() {
-		try {
-			directives = undefined
-			const dataFetch = await getTeachers(false, 0, search)
-			directives = dataFetch.body
-		} catch (err) {
-			directives = {
-				users: [],
+		if (timeout) clearTimeout(timeout)
+		timeout = setTimeout(async () => {
+			try {
+				teachers = undefined
+				const dataFetch = await getTeachers(false, 0, search)
+				teachers = dataFetch.body
+			} catch (err) {
+				teachers = {
+					users: [],
+				}
+				addToast({
+					message: err.message,
+					type: 'error',
+				})
 			}
-			addToast({
-				message: err.message,
-				type: 'error',
-			})
-		}
+		}, 500)
 	}
-	// Upload directive
-	function validatorsDirective(formDirective: User) {
-		if (formDirective.name === '' || formDirective.name.length > 100)
+	// Upload teacher
+	function validatorsTeacher(formTeacher: User) {
+		if (formTeacher.name === '' || formTeacher.name.length > 100)
 			return { success: false, message: 'Debe existir un nombre de máx. 100 carac.' }
-		if (formDirective.first_lastname === '' || formDirective.first_lastname.length > 100)
+		if (formTeacher.first_lastname === '' || formTeacher.first_lastname.length > 100)
 			return {
 				success: false,
 				message: 'Debe existir un apellido paterno de máx. 100 carac.',
 			}
-		if (formDirective.second_lastname === '' || formDirective.second_lastname.length > 100)
+		if (formTeacher.second_lastname === '' || formTeacher.second_lastname.length > 100)
 			return {
 				success: false,
 				message: 'Debe existir un apellido materno de máx. 100 carac.',
 			}
-		if (formDirective.rut.length < 10 || !validator.rutValidator(formDirective.rut))
+		if (formTeacher.rut.length < 10 || !validator.rutValidator(formTeacher.rut))
 			return {
 				success: false,
 				message: 'Debe existir un RUT en formato 12345678-9 (Mín. 10 carac.)',
@@ -140,30 +156,30 @@
 		return { success: true }
 	}
 
-	function initForm(newDirective: User) {
+	function initForm(newTeacher: Teacher) {
 		toggleModal()
-		formDirective = {
+		formTeacher = {
 			name: '',
 			first_lastname: '',
 			second_lastname: '',
 			rut: '',
 		}
-		directives.users = [newDirective, ...directives.users]
+		teachers.users = [newTeacher, ...teachers.users]
 	}
 
-	async function uploadDirective() {
+	async function uploadTeacher() {
 		try {
-			const validators = validatorsDirective(formDirective)
+			const validators = validatorsTeacher(formTeacher)
 			if (!validators.success) throw new Error(validators.message)
 			const dataFetch = await API.fetchData(
 				'post',
-				`${variables.API}/api/directive/new_directive`,
-				formDirective,
+				`${variables.API}/api/teachers/new_teacher`,
+				formTeacher,
 				true,
 				undefined,
 				token,
 			)
-			initForm(dataFetch.body.directive)
+			initForm(dataFetch.body.teacher)
 			addToast({
 				message: 'Se ha agregado el directivo exitosamente',
 				type: 'success',
@@ -176,23 +192,50 @@
 		}
 	}
 
-	async function editDirective() {
+	async function editTeacher() {
 		try {
-			const index = directivePosition
-			const validators = validatorsDirective(directiveEdit)
+			const index = teacherPosition
+			const validators = validatorsTeacher(teacherEdit.user)
 			if (!validators.success) throw new Error(validators.message)
 			await API.fetchData(
 				'put',
-				`${variables.API}/api/directive/edit_directive/${directiveEdit._id}`,
-				directiveEdit,
+				`${variables.API}/api/teachers/edit_teacher/${teacherEdit.user._id}`,
+				teacherEdit,
 				true,
 				undefined,
 				token,
 			)
 			toggleModalEdit()
-			directives.users[index] = directiveEdit
+			teachers.users[index] = teacherEdit
 			addToast({
 				message: 'Se ha editado con éxito el directivo',
+				type: 'success',
+			})
+		} catch (err) {
+			addToast({
+				message: err.message,
+				type: 'error',
+			})
+		}
+	}
+	// Add subject course
+	async function addSubjectCourse() {
+		try {
+			if (subject === '') throw new Error('Debe seleccionar una materia - curso')
+			const subjectCourse = subject.split('-')
+			const id = teachers.users[teacherPosition]._id
+			const dataFetch = await API.fetchData(
+				'post',
+				`${variables.API}/api/teachers/add_subject_course/${id}`,
+				{ course: subjectCourse[0], subject: subjectCourse[1] },
+				true,
+				undefined,
+				token,
+			)
+			console.log(dataFetch.body)
+			teachers.users[teacherPosition] = dataFetch.body
+			addToast({
+				message: 'Se ha agregado exitosamente la materia/curso',
 				type: 'success',
 			})
 		} catch (err) {
@@ -210,19 +253,19 @@
 
 	async function changeStatus() {
 		try {
-			const index = directivePosition
+			const index = teacherPosition
 			if (why.length > 535 || why === '')
 				throw new Error('Debe existir un motivo de máx 535 cárac.')
 			await API.fetchData(
 				'post',
-				`${variables.API}/api/directive/change_status/${directiveEdit._id}`,
+				`${variables.API}/api/directive/change_status/${teacherEdit.user._id}`,
 				{ why },
 				true,
 				undefined,
 				token,
 			)
 			initStatusForm()
-			directives.users[index].status = directives.users[index].status === 1 ? 0 : 1
+			teachers.users[index].user.status = teachers.users[index].user.status === 1 ? 0 : 1
 			addToast({
 				message: 'Se ha cambiado el estado del directivo exitosamente',
 				type: 'success',
@@ -239,33 +282,44 @@
 <Panel>
 	<Icons slot="nav">
 		<ButtonIcon
-			title={'Agregar directivos'}
+			title={'Agregar profesore'}
 			clickFunction={toggleModal}
 			classItem={'fa-solid fa-user-plus'}
 		/>
 		<AIcon
-			title={'Agregar directivos'}
-			href={'/admin/directivos/masivo'}
+			title={'Agregar profesores'}
+			href={'/admin/profesores/masivo'}
 			classItem={'fa-solid fa-user-group'}
 		/>
 	</Icons>
-	<h2>Directivos</h2>
+	<h2>Profesores</h2>
 	<Search search={searchFunction} bind:value={search} />
-	{#if directives}
+	{#if teachers}
 		<br />
-		<Table header={['Nombre', 'Ap. P', 'Ap. M', 'RUT', 'Estado', '']}>
-			{#each directives.users as directive, i}
+		<Table header={['Nombre', 'Ap. P', 'Ap. M', 'RUT', 'Estado', 'Materias', '']}>
+			{#each teachers.users as teacher, i}
 				<tr>
-					<td>{directive.name}</td>
-					<td>{directive.first_lastname}</td>
-					<td>{directive.second_lastname}</td>
-					<td>{directive.rut}</td>
-					<td>{directive.status ? 'Activo' : 'Inactivo'}</td>
+					<td>{teacher.user.name}</td>
+					<td>{teacher.user.first_lastname}</td>
+					<td>{teacher.user.second_lastname}</td>
+					<td>{teacher.user.rut}</td>
+					<td>{teacher.user.status ? 'Activo' : 'Inactivo'}</td>
+					<td>
+						<Button
+							type={'button'}
+							click={() => {
+								toggleSubjects()
+								teacherPosition = i
+							}}
+						>
+							<i class="fa-solid fa-book-bookmark s-Ss2zncTxuoSI" />
+						</Button>
+					</td>
 					<td>
 						<Button
 							click={() => {
-								directiveEdit = Object.assign({}, directive)
-								directivePosition = i
+								teacherEdit = Object.assign({}, teacher)
+								teacherPosition = i
 								toggleModalEdit()
 							}}
 							type={'button'}><i class="fa-solid fa-pen-to-square" /></Button
@@ -287,45 +341,81 @@
 <!-- Modals -->
 {#if modal}
 	<Modal onClose={toggleModal}>
-		<h2 slot="title">Agregar directivo</h2>
-		<Form form={uploadDirective}>
+		<h2 slot="title">Agregar profesor</h2>
+		<Form form={uploadTeacher}>
 			<label for="name">Nombre</label>
-			<Input bind:value={formDirective.name} id="name" />
+			<Input bind:value={formTeacher.name} id="name" />
 			<label for="fln">Apellido Paterno</label>
-			<Input bind:value={formDirective.first_lastname} id="fln" />
+			<Input bind:value={formTeacher.first_lastname} id="fln" />
 			<label for="sln">Apellido Materno</label>
-			<Input bind:value={formDirective.second_lastname} id="sln" />
+			<Input bind:value={formTeacher.second_lastname} id="sln" />
 			<label for="rut">RUT</label>
-			<Input bind:value={formDirective.rut} id="rut" />
-			<Button type={'submit'}>Agregar directivo</Button>
+			<Input bind:value={formTeacher.rut} id="rut" />
+			<Button type={'submit'}>Agregar profesor</Button>
 		</Form>
+	</Modal>
+{/if}
+
+{#if modalSubjects}
+	<Modal onClose={toggleSubjects}>
+		<h2 slot="title">
+			Materias {teachers.users[teacherPosition].user.name}
+			{teachers.users[teacherPosition].user.first_lastname}
+		</h2>
+		<Form form={addSubjectCourse}>
+			<label for="subject">Materia - Curso</label>
+			{#if courses}
+				<Select bind:value={subject} id={'subject'}>
+					<option value="">Seleccione una materia - curso</option>
+					{#each courses as course}
+						{#each course.subjects as subject}
+							{#each course.sections as section}
+								<option value="{section._id}-{subject._id}"
+									>{course.course} {section.section} {subject.subject}</option
+								>
+							{/each}
+						{/each}
+					{/each}
+				</Select>
+			{/if}
+			<Button type={'submit'}>Agregar materia/curso al profesor</Button>
+		</Form>
+		<br />
+		<Table header={['Materia', 'Curso']}>
+			{#each teachers.users[teacherPosition].imparted as imparted}
+				<tr>
+					<td>{imparted.subject.subject}</td>
+					<td>{imparted.course.course.course} {imparted.course.section}</td>
+				</tr>
+			{/each}
+		</Table>
 	</Modal>
 {/if}
 
 {#if modalEdit}
 	<Modal onClose={toggleModalEdit}>
 		<h2 slot="title">
-			Editar {directives.users[directivePosition].name}
-			{directives.users[directivePosition].first_lastname}
+			Editar {teachers.users[teacherPosition].user.name}
+			{teachers.users[teacherPosition].user.first_lastname}
 		</h2>
-		<Form form={editDirective}>
+		<Form form={editTeacher}>
 			<label for="nameE">Nombre</label>
-			<Input bind:value={directiveEdit.name} id="nameE" />
+			<Input bind:value={teacherEdit.user.name} id="nameE" />
 			<label for="flnE">Apellido Paterno</label>
-			<Input bind:value={directiveEdit.first_lastname} id="flnE" />
+			<Input bind:value={teacherEdit.user.first_lastname} id="flnE" />
 			<label for="slnE">Apellido Materno</label>
-			<Input bind:value={directiveEdit.second_lastname} id="slnE" />
+			<Input bind:value={teacherEdit.user.second_lastname} id="slnE" />
 			<label for="rutE">RUT</label>
-			<Input bind:value={directiveEdit.rut} id="rutE" />
-			<Button type={'submit'}>Editar directivo</Button>
+			<Input bind:value={teacherEdit.user.rut} id="rutE" />
+			<Button type={'submit'}>Editar profesor</Button>
 		</Form>
-		{#if directives.users[directivePosition].status === 1}
+		{#if teachers.users[teacherPosition].user.status === 1}
 			<button on:click={toggleModalStatus} class="Form__button Down" type="button"
-				><i class="fa-solid fa-angles-down" /> Dar de baja directivo
+				><i class="fa-solid fa-angles-down" /> Dar de baja profesor
 			</button>
 		{:else}
 			<button on:click={toggleModalStatus} class="Form__button Up" type="button">
-				<i class="fa-solid fa-angles-up" /> Reintegrar directivo
+				<i class="fa-solid fa-angles-up" /> Reintegrar profesor
 			</button>
 		{/if}
 	</Modal>
@@ -334,7 +424,7 @@
 {#if modalStatus}
 	<Modal onClose={toggleModalStatus}>
 		<h2 slot="title">
-			Cambiar estado directivo - {directives.users[directivePosition].status === 1
+			Cambiar estado profesor - {teachers.users[teacherPosition].user.status === 1
 				? 'Dar de baja'
 				: 'Reintegrar'}
 		</h2>

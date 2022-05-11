@@ -37,15 +37,12 @@
 	const toggleSpecialty = () => (modalSpecialty = !modalSpecialty)
 	const toggleSubject = () => (modalSubject = !modalSubject)
 	const toggleAnchor = () => (modalAnchor = !modalAnchor)
-	const toggleCourseSubjects = (id?: string, index?: number, indexS?: number) => {
+	const toggleCourseSubjects = (id?: string, index?: number) => {
 		subjectAnchor = ''
-		sectionId = id
+		courseId = id
 		coursePosition = index
-		sectionPosition = indexS
 		modalCourseSubjects = !modalCourseSubjects
-		sectionEdit = sections.filter((section) => {
-			if (section._id === sectionId) return section
-		})[0]
+		courseEdit = courses[index]
 		toggleAnchor()
 	}
 	// Form
@@ -56,36 +53,32 @@
 	}
 	let subjectAnchor = ''
 	// Anchor
-	let sectionId: string
-	let sectionEdit: Section
+	let courseId: string
+	let courseEdit: Course
 	let coursePosition: number
-	let sectionPosition: number
 	//Data
 	let subjects: Subject[]
 	let specialties: Specialty[]
 	let courses: Course[]
-	let sections: Section[]
 
 	onMount(async () => {
 		try {
 			const dataFetch = await Promise.all([
 				API.fetchGetData(`${variables.API}/api/subjects/get_subjects`, false, token),
 				API.fetchGetData(`${variables.API}/api/subjects/get_specialties`, false, token),
-				API.fetchGetData(`${variables.API}/api/course/get_course_sections`, false, token),
+				API.fetchGetData(`${variables.API}/api/course/get_courses`, false, token),
 			]).then((data) => {
 				return {
 					subjects: data[0].body.subjects,
 					specialties: data[1].body.specialties,
 					course: data[2].body.courses,
-					sections: data[2].body.sections,
 				}
 			})
 			// Assign
 			subjects = dataFetch.subjects
 			specialties = dataFetch.specialties
 			courses = dataFetch.course
-			sections = dataFetch.sections
-			console.log(sections)
+			console.log(courses)
 		} catch (err) {
 			subjects = []
 			specialties = []
@@ -204,29 +197,21 @@
 		try {
 			if (subjectAnchor === '')
 				throw new Error('Debe seleccionar una materia que anclar al curso')
-			const sId = sectionId
-			const subjectId = subjectAnchor
-			await API.fetchData(
+			const cPosition = coursePosition
+			const dataFetch = await API.fetchData(
 				'post',
 				`${variables.API}/api/subjects/add_subject`,
 				{
-					section: sectionId,
+					course: courseId,
 					subject: subjectAnchor,
 				},
 				true,
 				undefined,
 				token,
 			)
-			sections = sections.map((section) => {
-				if (section._id === sId) {
-					const subject = subjects.filter((subject) => {
-						if (subject._id === subjectId) return subject
-					})[0]
-					section.subjects = [subject, ...section.subjects]
-					sectionEdit.subjects = sectionEdit.subjects
-				}
-				return section
-			})
+			// Add subject
+			courses[cPosition].subjects.push(dataFetch.body.subject)
+			courseEdit = courses[cPosition]
 			addToast({
 				message: 'Se ha anclado la materia al curso exitosamente',
 				type: 'success',
@@ -338,19 +323,14 @@
 		</h2>
 		<Table header={['Curso', 'Materias']}>
 			{#each courses as course, i}
-				{#each course.sections as section, iS}
-					<tr>
-						<td>{course.course} {section.section}</td>
-						<td>
-							<Button
-								click={() => toggleCourseSubjects(section._id, i, iS)}
-								type={'button'}
-							>
-								<i class="fa-solid fa-book-bookmark" />
-							</Button>
-						</td>
-					</tr>
-				{/each}
+				<tr>
+					<td>{course.course}</td>
+					<td>
+						<Button click={() => toggleCourseSubjects(course._id, i)} type={'button'}>
+							<i class="fa-solid fa-book-bookmark" />
+						</Button>
+					</td>
+				</tr>
 			{/each}
 		</Table>
 	</Modal>
@@ -360,26 +340,22 @@
 	<Modal onClose={toggleCourseSubjects}>
 		<h2 slot="title">
 			Materias {courses[coursePosition].course}
-			{courses[coursePosition].sections[sectionPosition].section}
 		</h2>
 		<Form form={addSubject}>
 			<label for="subject-a">Materia</label>
 			<Select bind:value={subjectAnchor} id={'subject-a'}>
 				<option value="">Selecione una materia</option>
 				{#each subjects as subject}
-					{#if !sectionEdit.subjects.some((s) => s._id === subject._id)}
+					{#if !courseEdit.subjects.some((s) => s._id === subject._id)}
 						<option value={subject._id}>{subject.subject}</option>
 					{/if}
 				{/each}
 			</Select>
-			<Button type={'submit'}
-				>Agregar anclaje a {courses[coursePosition].course}
-				{courses[coursePosition].sections[sectionPosition].section}</Button
-			>
+			<Button type={'submit'}>Agregar anclaje a {courses[coursePosition].course}</Button>
 		</Form>
 		<br />
 		<Table header={['Materia', '']}>
-			{#each sectionEdit.subjects as subject}
+			{#each courseEdit.subjects as subject}
 				<tr>
 					<td>{subject.subject}</td>
 					<td

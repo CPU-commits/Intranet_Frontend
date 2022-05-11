@@ -26,12 +26,14 @@
 	import { variables } from '$lib/variables'
 	import type { Course } from '$models/admin/courses.model'
 	import type { Cycle } from '$models/admin/cycles.model'
+	import type { Teacher } from '$models/admin/teacher.model'
 	import { addToast } from '$stores/toasts'
 	import API from '$utils/APIModule'
 	import { onMount } from 'svelte'
 	// Data
 	let courses: Course[]
 	let cycles: Cycle[]
+	let teachers: Teacher[]
 	// Modal
 	let modalCycle = false
 	let modalCourse = false
@@ -58,7 +60,6 @@
 		level: 0,
 	}
 	// Dangers
-	// Dangers
 	let first: boolean
 	let consecutive: boolean
 	let final: boolean
@@ -71,14 +72,22 @@
 			const dataFetch = await Promise.all([
 				API.fetchGetData(`${variables.API}/api/course/get_courses`, false, token),
 				API.fetchGetData(`${variables.API}/api/course/get_cycles`, false, token),
+				API.fetchGetData(
+					`${variables.API}/api/teachers/get_teachers?total=false&skip=0`,
+					false,
+					token,
+				),
 			]).then((data) => {
 				return {
 					courses: data[0].body.courses,
 					cycles: data[1].body.cycles,
+					teachers: data[2].body.users,
 				}
 			})
 			courses = dataFetch.courses
 			cycles = dataFetch.cycles
+			teachers = dataFetch.teachers
+			console.log(courses)
 			// Dangers init
 			recalculateDangers()
 		} catch (err) {
@@ -312,6 +321,27 @@
 		}
 	}
 
+	async function addTeacher(e: KeyboardEvent, index: number) {
+		const target = e.target as HTMLInputElement
+		const indexC = positionCourse
+		try {
+			await API.fetchData(
+				'post',
+				`${variables.API}/api/course/add_teacher_section/${target.value}/${target.dataset.id}`,
+				undefined,
+				true,
+				undefined,
+				token,
+			)
+			courses[indexC].sections[index].header_teacher = target.value
+		} catch (err) {
+			addToast({
+				message: err.message,
+				type: 'error',
+			})
+		}
+	}
+
 	async function deleteSection(id: string) {
 		try {
 			const index = positionCourse
@@ -367,18 +397,11 @@
 		{#if final}
 			<span class="Danger">* No existe final de nivel/grado</span>
 		{/if}
-		<Table
-			header={['Curso', 'Ciclo', 'Profesor Jefe', 'Nivel/Grado', 'Secciones', 'Final', '']}
-		>
+		<Table header={['Curso', 'Ciclo', 'Nivel/Grado', 'Secciones', 'Final', '']}>
 			{#each courses as course, i}
 				<tr>
 					<td>{course.course}</td>
 					<td>{course.cycle.cycle}</td>
-					<td
-						>{course.header_teacher
-							? `${course.header_teacher.name} ${course.header_teacher.first_lastname}`
-							: 'Sin asignar'}</td
-					>
 					<td>{course.level}°</td>
 					<td>
 						<ButtonIcon
@@ -522,10 +545,25 @@
 			<Button type={'submit'}>Agregar secci&oacute;n</Button>
 		</Form>
 		<br />
-		<Table header={['Sección', '']}>
-			{#each courses[positionCourse].sections as section}
+		<Table header={['Sección', 'Profesor jefe', '']}>
+			{#each courses[positionCourse].sections as section, i}
 				<tr>
 					<td>{section.section}</td>
+					<td>
+						<Select
+							dataId={section._id}
+							change={(e) => addTeacher(e, i)}
+							value={section?.header_teacher}
+							id={'teacher'}
+						>
+							<option value="">Sin asignar</option>
+							{#each teachers as teacher}
+								<option value={teacher._id}
+									>{teacher.user.name} {teacher.user.first_lastname}</option
+								>
+							{/each}
+						</Select>
+					</td>
 					<td>
 						<ButtonIcon
 							title={'Eliminar sección'}
