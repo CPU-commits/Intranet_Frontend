@@ -1,9 +1,11 @@
 <script lang="ts">
-	export let value
+	export let value: any
 	export let id: string
+	export let change = (...any: any): any => {}
+	export let dataId = ''
 </script>
 
-<select bind:value {id}>
+<select data-id={dataId} on:change={change} bind:value {id}>
 	<slot />
 </select>
 

@@ -8,12 +8,14 @@
 <menu class="AdminMenu">
 	<ul>
 		<a href="/admin/estudiantes">
-			<li class:Selected={url === '/admin/estudiantes'}>
+			<li
+				class:Selected={url === '/admin/estudiantes' || url === '/admin/estudiantes/masivo'}
+			>
 				<i class="fa-solid fa-graduation-cap" /> Estudiantes
 			</li>
 		</a>
 		<a href="/admin/profesores">
-			<li class:Selected={url === '/admin/profesores'}>
+			<li class:Selected={url === '/admin/profesores' || url === '/admin/profesores/masivo'}>
 				<i class="fa-solid fa-chalkboard-user" /> Profesores
 			</li>
 		</a>
@@ -38,18 +40,18 @@
 			</li>
 		</a>
 		<a href="/admin/semestres">
-			<li>
+			<li class:Selected={url === '/admin/semestres'}>
 				<i class="fa-solid fa-calendar-days" /> Semestres
+			</li>
+		</a>
+		<a href="/admin/aula_virtual">
+			<li>
+				<i class="fa-solid fa-chalkboard" /> Aula Virtual
 			</li>
 		</a>
 		<a href="/admin/">
 			<li>
 				<i class="fa-solid fa-bezier-curve" /> Mapa
-			</li>
-		</a>
-		<a href="/admin/archivos">
-			<li class:Selected={url === '/admin/archivos'}>
-				<i class="fa-solid fa-cloud" /> Archivos
 			</li>
 		</a>
 		<a href="/admin/historico">
