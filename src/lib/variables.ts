@@ -1,5 +1,6 @@
 export const variables = {
     API: import.meta.env.VITE_API.toString(),
+    API_FILES: import.meta.env.VITE_API_FILES.toString(),
     CLIENT: import.meta.env.VITE_CLIENT,
     NODE_ENV: import.meta.env.VITE_NODE_ENV,
     redis: {
