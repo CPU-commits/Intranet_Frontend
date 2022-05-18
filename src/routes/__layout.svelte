@@ -12,6 +12,7 @@
 			props: {
 				authenticated: session.authenticated,
 				user: session.user,
+				url: url.pathname,
 			},
 		}
 	}
@@ -20,6 +21,7 @@
 <script lang="ts">
 	export let user: UserSession
 	export let authenticated: boolean
+	export let url: string
 
 	import Menu from '$components/Menu.svelte'
 	import Toasts from '$components/Toast/Toasts.svelte'
@@ -29,7 +31,7 @@
 </script>
 
 <!-- Menu -->
-<Menu {user} {authenticated} />
+<Menu {url} {user} {authenticated} />
 
 <Toasts />
 
