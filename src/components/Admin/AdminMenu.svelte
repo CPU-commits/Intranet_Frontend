@@ -7,20 +7,20 @@
 
 <menu class="AdminMenu">
 	<ul>
-		<a href="/admin/estudiantes">
+		<a sveltekit:prefetch href="/admin/estudiantes">
 			<li
 				class:Selected={url === '/admin/estudiantes' || url === '/admin/estudiantes/masivo'}
 			>
 				<i class="fa-solid fa-graduation-cap" /> Estudiantes
 			</li>
 		</a>
-		<a href="/admin/profesores">
+		<a sveltekit:prefetch href="/admin/profesores">
 			<li class:Selected={url === '/admin/profesores' || url === '/admin/profesores/masivo'}>
 				<i class="fa-solid fa-chalkboard-user" /> Profesores
 			</li>
 		</a>
 		{#if user_type === UserTypes.DIRECTOR}
-			<a href="/admin/directivos">
+			<a sveltekit:prefetch href="/admin/directivos">
 				<li
 					class:Selected={url === '/admin/directivos' ||
 						url === '/admin/directivos/masivo'}
@@ -29,32 +29,32 @@
 				</li>
 			</a>
 		{/if}
-		<a href="/admin/cursos">
+		<a sveltekit:prefetch href="/admin/cursos">
 			<li class:Selected={url === '/admin/cursos'}>
 				<i class="fa-solid fa-layer-group" /> Cursos
 			</li>
 		</a>
-		<a href="/admin/materias">
+		<a sveltekit:prefetch href="/admin/materias">
 			<li class:Selected={url === '/admin/materias'}>
 				<i class="fa-solid fa-book-bookmark" /> Materias
 			</li>
 		</a>
-		<a href="/admin/semestres">
+		<a sveltekit:prefetch href="/admin/semestres">
 			<li class:Selected={url === '/admin/semestres'}>
 				<i class="fa-solid fa-calendar-days" /> Semestres
 			</li>
 		</a>
-		<a href="/admin/aula_virtual">
+		<a sveltekit:prefetch href="/admin/aula_virtual">
 			<li>
 				<i class="fa-solid fa-chalkboard" /> Aula Virtual
 			</li>
 		</a>
-		<a href="/admin/">
+		<a sveltekit:prefetch href="/admin/">
 			<li>
 				<i class="fa-solid fa-bezier-curve" /> Mapa
 			</li>
 		</a>
-		<a href="/admin/historico">
+		<a sveltekit:prefetch href="/admin/historico">
 			<li class:Selected={url === '/admin/historico'}>
 				<i class="fa-solid fa-clock-rotate-left" /> Historico
 			</li>
