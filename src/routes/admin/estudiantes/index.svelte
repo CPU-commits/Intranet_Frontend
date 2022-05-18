@@ -27,8 +27,7 @@
 	import SpinnerGet from '$components/SpinnerGet.svelte'
 	import { variables } from '$lib/variables'
 	import type { Section } from '$models/admin/courses.model'
-	import type { Students } from '$models/admin/student.model'
-	import type { User } from '$models/users/users.model'
+	import type { Student, Students } from '$models/admin/student.model'
 	import { addToast } from '$stores/toasts'
 	import API from '$utils/APIModule'
 	import onscrollLoading from '$utils/onscrollLoading'
@@ -55,13 +54,14 @@
 		first_lastname: '',
 		second_lastname: '',
 		rut: '',
+		registration_number: '',
 	}
 	// Change status
 	let why = ''
 	// Data
 	let students: Students
 	let courses: Section[]
-	let studentEdit: User
+	let studentEdit: Student
 	let studentPosition: number
 	let course = ''
 
@@ -73,7 +73,6 @@
 			])
 			students = data[0].body
 			courses = data[1].body.sections
-			console.log(students)
 			onscrollLoading(students.total, async (n: number) => {
 				runningLoading = true
 				try {
@@ -128,7 +127,7 @@
 		}
 	}
 	// Upload student
-	function validatorsStudent(formStudent: User) {
+	function validatorsStudent(formStudent: Student) {
 		if (formStudent.name === '' || formStudent.name.length > 100)
 			return { success: false, message: 'Debe existir un nombre de máx. 100 carac.' }
 		if (formStudent.first_lastname === '' || formStudent.first_lastname.length > 100)
@@ -146,16 +145,22 @@
 				success: false,
 				message: 'Debe existir un RUT en formato 12345678-9 (Mín. 10 carac.)',
 			}
+		if (formStudent.registration_number === '' || formStudent.registration_number.length > 100)
+			return {
+				success: false,
+				message: 'Debe existir una matricula',
+			}
 		return { success: true }
 	}
 
-	function initForm(newStudent: User) {
+	function initForm(newStudent: Student) {
 		toggleModal()
 		formStudent = {
 			name: '',
 			first_lastname: '',
 			second_lastname: '',
 			rut: '',
+			registration_number: '',
 		}
 		students.users = [newStudent, ...students.users]
 	}
@@ -202,6 +207,10 @@
 				undefined,
 				token,
 			)
+			console.log({
+				...studentEdit,
+				course: course !== '' ? course : '',
+			})
 			toggleModalEdit()
 			students.users[index] = studentEdit
 			addToast({
@@ -266,7 +275,7 @@
 	<Search search={searchFunction} bind:value={search} />
 	{#if students}
 		<br />
-		<Table header={['Nombre', 'Ap. P', 'Ap. M', 'RUT', 'Curso', 'Estado', '']}>
+		<Table header={['Nombre', 'Ap. P', 'Ap. M', 'RUT', 'Curso', 'Matricula', 'Estado', '']}>
 			{#each students.users as student, i}
 				<tr>
 					<td>{student.name}</td>
@@ -278,6 +287,7 @@
 							? `${student.course.course.course} ${student.course.section}`
 							: 'Sin curso'}</td
 					>
+					<td>{student.registration_number}</td>
 					<td>{student.status ? 'Activo' : 'Inactivo'}</td>
 					<td>
 						<Button
@@ -316,6 +326,8 @@
 			<Input bind:value={formStudent.second_lastname} id="sln" />
 			<label for="rut">RUT</label>
 			<Input bind:value={formStudent.rut} id="rut" />
+			<label for="registration_number">Matricula</label>
+			<Input bind:value={formStudent.registration_number} id={'registration_number'} />
 			<Button type={'submit'}>Agregar estudiante</Button>
 		</Form>
 	</Modal>
@@ -343,6 +355,8 @@
 					<option value={course._id}>{course.course.course} {course.section}</option>
 				{/each}
 			</Select>
+			<label for="registration_numberE">Matricula</label>
+			<Input bind:value={studentEdit.registration_number} id={'registration_numberE'} />
 			<Button type={'submit'}>Editar estudiante</Button>
 		</Form>
 		{#if students.users[studentPosition].status === 1}

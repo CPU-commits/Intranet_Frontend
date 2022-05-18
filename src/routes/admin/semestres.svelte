@@ -51,6 +51,7 @@
 			)
 			semesters = semestersData.body.semesters
 		} catch (err) {
+			semesters = []
 			addToast({
 				message: err.message,
 				type: 'error',
