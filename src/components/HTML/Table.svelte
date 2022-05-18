@@ -2,20 +2,27 @@
 	export let header: string[]
 </script>
 
-<table>
-	<thead>
-		<tr>
-			{#each header as tdElement}
-				<td>{@html tdElement}</td>
-			{/each}
-		</tr>
-	</thead>
-	<tbody class="Tbody">
-		<slot />
-	</tbody>
-</table>
+<section class="Table">
+	<table>
+		<thead>
+			<tr>
+				{#each header as tdElement}
+					<td>{@html tdElement}</td>
+				{/each}
+			</tr>
+		</thead>
+		<tbody class="Tbody">
+			<slot />
+		</tbody>
+	</table>
+</section>
 
 <style>
+	.Table {
+		overflow-x: auto;
+		width: 100%;
+	}
+
 	table {
 		width: 100%;
 		border-collapse: collapse;

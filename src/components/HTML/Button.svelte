@@ -1,5 +1,10 @@
-<script>
-	export let type
+<script lang="ts">
+	enum TypeButton {
+		'button',
+		'submit',
+	}
+
+	export let type: keyof typeof TypeButton
 	export let click = () => {}
 </script>
 

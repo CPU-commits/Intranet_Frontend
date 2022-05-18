@@ -3,15 +3,18 @@
 
 	export let user: UserSession
 	export let authenticated: boolean
+	export let url: string
 </script>
 
-<nav class="Menu">
+<nav class="Menu" class:News={url.startsWith('/noticias')}>
 	<section class="Menu__content">
 		<div class="Menu__content--left">
 			<button class="InvisibleButton">
 				<i class="fa-solid fa-bars" />
 			</button>
-			<h2>CSAH Intranet</h2>
+			<a href="/">
+				<h2>CSAH Intranet</h2>
+			</a>
 		</div>
 		<div class="Menu__content--main">
 			{#if authenticated}
@@ -29,28 +32,37 @@
 			{/if}
 		</div>
 		<div class="Menu__content--right">
-			<button class="InvisibleButton">
+			<button>
 				<i class="fa-solid fa-bell" />
 			</button>
-			<button class="InvisibleButton">
+			<a href="/usuario">
 				<i class="fa-solid fa-user" />
-			</button>
+			</a>
 			{#if user?.user_type === 'd' || user?.user_type === 'f'}
-				<button class="InvisibleButton">
+				<a href="/admin">
 					<i class="fa-solid fa-gear" />
-				</button>
+				</a>
 			{/if}
 		</div>
 	</section>
 </nav>
 
-<style>
+<style lang="scss">
 	.Menu {
 		width: 100%;
 		height: 60px;
 		box-shadow: rgb(71 75 255 / 10%) 0px 2px 4px;
 		z-index: 10;
 		background-color: white;
+	}
+	/* News */
+	.News {
+		background-color: var(--color-news-black);
+		h2,
+		i,
+		a {
+			color: white;
+		}
 	}
 
 	h2,
@@ -86,15 +98,21 @@
 		display: flex;
 	}
 
-	a {
+	a,
+	button {
+		background-color: transparent;
+		border: none;
 		font-family: 'Karla', sans-serif;
 		color: var(--color-dark);
-		font-size: 1.1rem;
 		text-decoration: none;
+		i {
+			font-size: 1rem;
+		}
 	}
 
 	.Menu__content--right {
 		display: flex;
+		align-items: center;
 		gap: 20px;
 		width: 200px;
 	}

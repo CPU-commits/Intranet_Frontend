@@ -2,9 +2,10 @@
 	export let classItem: string
 	export let title = ''
 	export let href: string
+	export let active = false
 </script>
 
-<a {href} {title}> <i class={classItem} /></a>
+<a sveltekit:prefetch class:Actived={active} {href} {title}> <i class={classItem} /></a>
 
 <style>
 	a {
@@ -19,5 +20,9 @@
 	i {
 		font-size: 1rem;
 		transition: all 0.4s ease;
+	}
+
+	.Actived i {
+		color: var(--color-main);
 	}
 </style>
