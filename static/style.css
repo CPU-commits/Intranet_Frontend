@@ -39,12 +39,21 @@ button {
     padding: 15px;
 }
 
+.TableVertical tr td:first-child {
+    background-color: var(--color-main);
+    border-bottom: 1px white solid;
+    color: white;
+}
+
 :root {
     --color-main: #5867e8;
     --color-main-light: #f8faff;
     --color-dark: #3d3d3d;
     --color-light: rgba(132, 139, 200, 0.3);
     --box-shadow: 0 2rem 3rem var(--color-light);
+    /* News */
+    --color-news: #fdbc48;
+    --color-news-black: #010409;
     /* Toast */
     --color-danger: #a70a1f;
     --color-info: #1dc2e0;
