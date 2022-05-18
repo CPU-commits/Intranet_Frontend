@@ -55,12 +55,13 @@ class APIModule {
     ): Promise<FetchResponse> {
         spinner.set(spinnerStatus)
         if (token)
-            config.headers["access-token"] = token
+        config.headers['Authorization'] = `Bearer ${token}`
         const response = await axios[method](URL, body, config)
             .then((res) =>{
                 return res.data
             })
             .catch(async (error: Error | AxiosError) =>{
+                spinner.set(false)
                 if(axios.isAxiosError(error)){
                     return await this.handleAxiosError(error)
                 }else{
@@ -85,12 +86,13 @@ class APIModule {
     ): Promise<FetchResponse> {
         spinner.set(spinnerStatus)
         if(token)
-            config.headers["access-token"] = token
+            config.headers['Authorization'] = `Bearer ${token}`
         const response = await axios.delete(URL, config)
             .then((res) =>{
                 return res.data
             })
             .catch(async (error: Error | AxiosError)=>{
+                spinner.set(false)
                 if(axios.isAxiosError(error)){
                     return await this.handleAxiosError(error)
                 }else{
@@ -115,12 +117,13 @@ class APIModule {
     ): Promise<FetchResponse> {
         spinner.set(spinnerStatus)
         if(token)
-            config.headers["access-token"] = token
+            config.headers['Authorization'] = `Bearer ${token}`
         const response = await axios.get(URL, config)
             .then((res) =>{
                 return res.data
             })
             .catch(async (error: Error | AxiosError)=>{
+                spinner.set(false)
                 if(axios.isAxiosError(error)){
                     return await this.handleAxiosError(error)
                 }else{
