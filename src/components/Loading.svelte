@@ -4,7 +4,7 @@
 
 <style lang="scss">
 	.SpinnerGet {
-		position: absolute;
+		position: fixed;
 		width: 100%;
 		height: 4px;
 		top: 0;

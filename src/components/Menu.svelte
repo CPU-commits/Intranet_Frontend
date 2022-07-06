@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { UserSession } from '$models/userSession.model'
+	import Notifications from './Notifications.svelte'
 
 	export let user: UserSession
 	export let authenticated: boolean
@@ -32,9 +33,9 @@
 			{/if}
 		</div>
 		<div class="Menu__content--right">
-			<button>
-				<i class="fa-solid fa-bell" />
-			</button>
+			{#if authenticated}
+				<Notifications user_type={user.user_type} {url} token={user.token} />
+			{/if}
 			<a href="/usuario">
 				<i class="fa-solid fa-user" />
 			</a>
