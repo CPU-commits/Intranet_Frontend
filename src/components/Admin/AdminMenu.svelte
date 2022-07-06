@@ -30,7 +30,7 @@
 			</a>
 		{/if}
 		<a sveltekit:prefetch href="/admin/cursos">
-			<li class:Selected={url === '/admin/cursos'}>
+			<li class:Selected={url === '/admin/cursos' || url.startsWith('/admin/secciones')}>
 				<i class="fa-solid fa-layer-group" /> Cursos
 			</li>
 		</a>
