@@ -4,11 +4,13 @@ import stringHash from 'string-hash'
 import { variables } from '$lib/variables'
 import redisInstance from './redisInstance'
 
-export default async function setCookie(data){
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function setCookie(data: any){
     // Desencrypt
     try {
         const id = stringHash(data.access_token).toString()
-        await (await redisInstance).set(id, JSON.stringify({
+        const redis = await redisInstance()
+        await redis.set(id, JSON.stringify({
             ...data.user,
             token: data.access_token,
         }))
@@ -19,7 +21,6 @@ export default async function setCookie(data){
                     sameSite: 'lax',
                     path: '/',
                     secure: (variables.NODE_ENV === 'prod'),
-                    maxAge: (3600 * 5),
                 }),
         }
         return headers
