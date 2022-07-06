@@ -14,4 +14,4 @@ async function createClientRedis() {
     }
 }
 
-export default createClientRedis()
+export default createClientRedis
