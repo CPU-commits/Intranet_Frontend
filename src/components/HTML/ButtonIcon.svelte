@@ -1,10 +1,23 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
+
 	export let classItem: string
 	export let title = ''
 	export let clickFunction: any
+	export let color: string = null
+	export let hover: string = 'var(--color-main)'
+
+	let btn: HTMLButtonElement
+
+	onMount(() => {
+		if (color) btn.style.setProperty('--color-i', color)
+		if (hover) btn.style.setProperty('--hover-i', hover)
+	})
 </script>
 
-<button {title} on:click={clickFunction} type="button"> <i class={classItem} /></button>
+<button bind:this={btn} {title} on:click={clickFunction} type="button">
+	<i class={classItem} /></button
+>
 
 <style>
 	button {
@@ -13,11 +26,12 @@
 	}
 
 	button:hover i {
-		color: var(--color-main);
+		color: var(--hover-i);
 	}
 
 	i {
 		font-size: 1rem;
 		transition: all 0.4s ease;
+		color: var(--color-i);
 	}
 </style>

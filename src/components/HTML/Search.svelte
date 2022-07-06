@@ -1,6 +1,9 @@
 <script lang="ts">
+	type Function = (...any: any) => any
+
 	export let value: string
-	export let search
+	export let search: Function
+	export let placeholder = 'Buscar'
 
 	import Input from './Input.svelte'
 </script>
@@ -9,7 +12,7 @@
 	<button on:click={search}>
 		<i class="fa-solid fa-magnifying-glass" />
 	</button>
-	<Input keyup={search} placeholder={'Buscar'} bind:value type={'text'} id={'search'} />
+	<Input keyup={search} {placeholder} bind:value type={'text'} id={'search'} />
 </div>
 
 <style lang="scss">

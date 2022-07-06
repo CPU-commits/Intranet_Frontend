@@ -1,9 +1,34 @@
 <script lang="ts">
-	export let files: any
+	import { addToast } from '$stores/toasts'
+
+	type Filter = {
+		filter: boolean
+		type?: string
+		message?: string
+	}
+
+	export let files: FileList
 	export let id: string
+	export let accept = '*'
+	export let filter: Filter = {
+		filter: false,
+	}
+
+	function onFileSelected(e) {
+		if (filter.filter) {
+			let image = e.target.files[0]
+			if (!image?.type?.includes(filter.type)) {
+				addToast({
+					message: filter.message,
+					type: 'error',
+				})
+				return
+			}
+		}
+	}
 </script>
 
-<input bind:files type="file" {id} />
+<input on:change={onFileSelected} {accept} bind:files type="file" {id} />
 
 <style lang="scss">
 	input {
