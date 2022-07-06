@@ -22,19 +22,21 @@ class APIModule {
     }
 
     private async handleAxiosError(error: AxiosError){
-        const responseJSON = error.response.data
+        const responseJSON = error?.response?.data
         if(error.response){
             return {
                 success: false,
                 statusCode: error.response.status,
-                message: responseJSON.message,
+                message: responseJSON
+                    ? responseJSON.message
+                    : error.message,
             }
         }else{
             return {
                 success: false,
-                message: responseJSON?.message
-                    ? responseJSON?.message
-                    : error.request.statusText,
+                message: responseJSON
+                    ? responseJSON.message
+                    : error.message,
                 request: error.request,
                 statusCode: 500,
             }
