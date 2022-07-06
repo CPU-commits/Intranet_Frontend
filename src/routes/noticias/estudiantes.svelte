@@ -1,10 +1,16 @@
 <script lang="ts" context="module">
 	export function load({ session }) {
+		const userType = session.user.user_type
+		if (userType !== UserTypes.STUDENT && userType !== UserTypes.STUDENT_DIRECTIVE)
+			return {
+				status: 401,
+				error: 'No estás autorizado',
+			}
 		return {
 			status: 200,
 			props: {
 				token: session.user.token,
-				user_type: session.user.user_type,
+				user_type: userType,
 			},
 		}
 	}
@@ -64,7 +70,7 @@
 	})
 
 	async function getNews(total = false, skip?: number) {
-		let URL = `${variables.API_NEWS}/api/news/get_news?total=${total}&limit=${LIMIT}`
+		let URL = `${variables.API_NEWS}/api/news/get_news?total=${total}&limit=${LIMIT}&type=student`
 		if (skip) URL += `&skip=${skip}`
 		const data = await API.fetchGetData(URL, false, token)
 		return data
@@ -74,8 +80,12 @@
 <section class="News">
 	{#if user_type === UserTypes.STUDENT || user_type === UserTypes.STUDENT_DIRECTIVE}
 		<ul class="News__type">
-			<li><a class="News__type--use" sveltekit:prefetch href="/noticias">General</a></li>
-			<li><a sveltekit:prefetch href="/noticias/estudiantes">Estudiantes</a></li>
+			<li><a sveltekit:prefetch href="/noticias">General</a></li>
+			<li>
+				<a class="News__type--use" sveltekit:prefetch href="/noticias/estudiantes"
+					>Estudiantes</a
+				>
+			</li>
 		</ul>
 	{/if}
 	{#if news}

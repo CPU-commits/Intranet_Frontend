@@ -1,45 +1,44 @@
 <script lang="ts" context="module">
-	import { UserTypes } from '$models/users/user_type.model'
+	import { variables } from '$lib/variables'
+	import type { News } from '$models/news.model'
 
-	export function load({ session }) {
-		if (
-			session.user.user_type === UserTypes.STUDENT ||
-			session.user.user_type === UserTypes.ATTORNEY
-		) {
+	import API from '$utils/APIModule'
+
+	export async function load({ session, params }) {
+		try {
+			const news = await API.fetchGetData(
+				`${variables.API_NEWS}/api/news/get_single_news/${params.news}`,
+				false,
+				session.user.token,
+			)
 			return {
-				status: 302,
-				redirect: '/usuario',
+				status: 200,
+				props: {
+					news: news.body.news,
+					token: session.user.token,
+				},
 			}
-		}
-		return {
-			status: 200,
-			props: {
-				token: session.user.token,
-			},
+		} catch (err) {
+			return {
+				status: err.statusCode,
+				error: err.message,
+			}
 		}
 	}
 </script>
 
 <script lang="ts">
-	export let token: string
-
 	import Form from '$components/HTML/Form.svelte'
-
-	import RichInput from '$components/HTML/RichInput.svelte'
-	import { variables } from '$lib/variables'
-	import { addToast } from '$stores/toasts'
 	import type Quill from 'quill'
-	import API from '$utils/APIModule'
-	import { goto } from '$app/navigation'
+	import { addToast } from '$stores/toasts'
+	import RichInput from '$components/HTML/RichInput.svelte'
 	import { deltaToHtml } from '$utils/quill'
+	import { goto } from '$app/navigation'
 
-	let news = {
-		title: '',
-		headline: '',
-		body: '',
-		img: 'gsdfg',
-	}
-	let src = '/img/news.svg'
+	export let news: News
+	export let token: string
+	// News
+	let newsCopy: News = JSON.parse(JSON.stringify(news))
 	let fileInput: HTMLInputElement
 	let quill: Quill
 
@@ -55,39 +54,37 @@
 		const reader = new FileReader()
 		reader.readAsDataURL(image)
 		reader.onload = (e) => {
-			src = e.target.result.toString()
+			newsCopy.image.url = e.target.result.toString()
 		}
-	}
-
-	function validatorsNews() {
-		if (news.title.length < 3 || news.title.length > 100)
-			return { success: false, message: 'Debe existir un titulo de mín 3 cárac. y máx 100' }
-		if (news.headline.length < 3 || news.headline.length > 500)
-			return { success: false, message: 'Debe existir una bajada de mín 3 cárac. y máx 500' }
-		if (fileInput.files.length === 0)
-			return { success: false, message: 'Debe seleccionar una imagen' }
-		if (news.body.length < 10)
-			return { success: false, message: 'Debe existir un cuerpo de mín 10 cárac.' }
-		return { success: true }
 	}
 
 	function buildForm() {
 		const form = new FormData()
-		form.append('title', news.title)
-		form.append('headline', news.headline)
-		form.append('body', news.body)
-		form.append('img', fileInput.files[0])
+		if (news.title !== newsCopy.title) form.append('title', newsCopy.title)
+		if (news.headline !== newsCopy.headline) form.append('headline', newsCopy.headline)
+		if (news.body !== newsCopy.body) form.append('body', newsCopy.body)
+		if (fileInput.files.length > 0) form.append('img', fileInput.files[0])
 		return form
 	}
 
-	async function publishNews() {
+	function validatorsNews() {
+		if (newsCopy.title.length < 3 || newsCopy.title.length > 100)
+			return { success: false, message: 'Debe existir un titulo de mín 3 cárac. y máx 100' }
+		if (newsCopy.headline.length < 3 || newsCopy.headline.length > 500)
+			return { success: false, message: 'Debe existir una bajada de mín 3 cárac. y máx 500' }
+		if (newsCopy.body.length < 10)
+			return { success: false, message: 'Debe existir un cuerpo de mín 10 cárac.' }
+		return { success: true }
+	}
+
+	async function updateNews() {
 		try {
-			news.body = deltaToHtml(quill)
+			newsCopy.body = deltaToHtml(quill)
 			const validators = validatorsNews()
 			if (!validators.success) throw new Error(validators.message)
 			await API.fetchData(
-				'post',
-				`${variables.API_NEWS}/api/news/new_news`,
+				'put',
+				`${variables.API_NEWS}/api/news/update_news/${news._id}`,
 				buildForm(),
 				true,
 				undefined,
@@ -96,7 +93,7 @@
 			goto('/noticias')
 			addToast({
 				type: 'success',
-				message: 'Se ha subido la noticia exitosamente',
+				message: 'Se ha actualizado la noticia exitosamente',
 			})
 		} catch (err) {
 			addToast({
@@ -109,10 +106,15 @@
 
 <section class="News">
 	<div class="News__contain">
-		<Form form={publishNews}>
-			<input bind:value={news.title} placeholder="Titulo" type="text" />
-			<textarea bind:value={news.headline} placeholder="Bajada" />
-			<img on:click={() => fileInput.click()} title="Subir imagen" {src} alt="Subir imagen" />
+		<Form form={updateNews}>
+			<input bind:value={newsCopy.title} placeholder="Titulo" type="text" />
+			<textarea bind:value={newsCopy.headline} placeholder="Bajada" />
+			<img
+				on:click={() => fileInput.click()}
+				title="Subir imagen"
+				src={newsCopy.image.url}
+				alt="Subir imagen"
+			/>
 			<input
 				on:change={(e) => onFileSelected(e)}
 				bind:this={fileInput}
@@ -120,8 +122,8 @@
 				accept=".jpg, .jpeg, .png"
 				type="file"
 			/>
-			<RichInput bind:value={quill} placeholder={'Cuerpo...'} />
-			<button type="submit">Publicar noticia </button>
+			<RichInput body={news.body} bind:value={quill} placeholder={'Cuerpo...'} />
+			<button type="submit">Editar noticia </button>
 		</Form>
 	</div>
 </section>
