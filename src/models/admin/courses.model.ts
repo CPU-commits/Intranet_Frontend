@@ -1,3 +1,4 @@
+import type { UserFiles } from "$models/users/files.model"
 import type { User } from "$models/users/users.model"
 import type { Cycle } from "./cycles.model"
 import type { Subject } from "./subjects.model"
@@ -7,6 +8,7 @@ export interface Section {
     course: Course
     header_teacher: User | string
     _id: string
+    file: UserFiles
 }
 
 export interface Course {
