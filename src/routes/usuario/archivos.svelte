@@ -40,7 +40,7 @@
 	import type { UserFiles } from '$models/users/files.model'
 	import SpinnerGet from '$components/SpinnerGet.svelte'
 	import Table from '$components/HTML/Table.svelte'
-	import getIcon from '$utils/getIcon'
+	import { getIcon, getTypeFile } from '$utils/getIcon'
 	import { formatDate } from '$utils/format'
 	import downloadFileURL from '$utils/downloadFileURL'
 	import Select from '$components/HTML/Select.svelte'
@@ -98,6 +98,10 @@
 				token,
 			)
 			userFiles = [dataFetch.body, ...userFiles]
+			addToast({
+				message: 'Se ha el archivo exitosamente',
+				type: 'success',
+			})
 		} catch (err) {
 			addToast({
 				message: err.message,
@@ -178,8 +182,8 @@
 			<Table header={['Tipo', 'Nombre', 'Permisos', 'Subida', 'Descargar', 'Eliminar']}>
 				{#each userFiles as file}
 					<tr>
-						<td><i class="{getIcon(file.type)} icon" /> {file.type}</td>
 						<td>{file.title}</td>
+						<td><i class="{getIcon(file.type)} icon" /> {getTypeFile(file.type)}</td>
 						<td>
 							<Select
 								change={(e) => changePermissions(e, file._id.$oid)}
