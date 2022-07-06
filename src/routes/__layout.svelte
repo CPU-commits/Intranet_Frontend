@@ -4,7 +4,7 @@
 		if (!URLs.some((u) => u === url.pathname) && !session.authenticated) {
 			return {
 				status: 302,
-				redirect: '/',
+				redirect: `/?redirect=${url.pathname}`,
 			}
 		}
 		return {
