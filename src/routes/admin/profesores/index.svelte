@@ -76,7 +76,6 @@
 			])
 			teachers = data[0].body
 			courses = data[1].body.courses
-			console.log(courses)
 			onscrollLoading(teachers.total, async (n: number) => {
 				runningLoading = true
 				try {

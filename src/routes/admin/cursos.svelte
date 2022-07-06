@@ -15,6 +15,7 @@
 	import Icons from '$components/Admin/Icons.svelte'
 	import MapElement from '$components/Admin/MapElement.svelte'
 	import Panel from '$components/Admin/Panel.svelte'
+	import AIcon from '$components/HTML/AIcon.svelte'
 	import Button from '$components/HTML/Button.svelte'
 	import ButtonIcon from '$components/HTML/ButtonIcon.svelte'
 	import Form from '$components/HTML/Form.svelte'
@@ -26,34 +27,26 @@
 	import { variables } from '$lib/variables'
 	import type { Course } from '$models/admin/courses.model'
 	import type { Cycle } from '$models/admin/cycles.model'
-	import type { Teacher } from '$models/admin/teacher.model'
 	import { addToast } from '$stores/toasts'
 	import API from '$utils/APIModule'
 	import { onMount } from 'svelte'
 	// Data
 	let courses: Course[]
 	let cycles: Cycle[]
-	let teachers: Teacher[]
 	// Modal
 	let modalCycle = false
 	let modalCourse = false
 	let modalMap = false
-	let modalSections = false
 	let modalEdit = false
 	const toggleCycle = () => (modalCycle = !modalCycle)
 	const toggleCourse = () => (modalCourse = !modalCourse)
 	const toggleMap = () => (modalMap = !modalMap)
-	const toggleSections = (i: number) => {
-		positionCourse = i
-		modalSections = !modalSections
-	}
 	const toggleEdit = (i: number) => {
 		positionCourse = i
 		modalEdit = !modalEdit
 	}
 	// Forms
 	let cycle = ''
-	let section = ''
 	let courseForm = {
 		course: '',
 		cycle: '',
@@ -72,22 +65,14 @@
 			const dataFetch = await Promise.all([
 				API.fetchGetData(`${variables.API}/api/course/get_courses`, false, token),
 				API.fetchGetData(`${variables.API}/api/course/get_cycles`, false, token),
-				API.fetchGetData(
-					`${variables.API}/api/teachers/get_teachers?total=false&skip=0`,
-					false,
-					token,
-				),
 			]).then((data) => {
 				return {
 					courses: data[0].body.courses,
 					cycles: data[1].body.cycles,
-					teachers: data[2].body.users,
 				}
 			})
 			courses = dataFetch.courses
 			cycles = dataFetch.cycles
-			teachers = dataFetch.teachers
-			console.log(courses)
 			// Dangers init
 			recalculateDangers()
 		} catch (err) {
@@ -292,79 +277,6 @@
 			})
 		}
 	}
-	// Sections
-	async function newSection() {
-		try {
-			if (section === '' || section.length > 100)
-				throw new Error('Debe existir una sección con máx. 100 cárac.')
-			const index = positionCourse
-			const dataFetch = await API.fetchData(
-				'post',
-				`${variables.API}/api/course/new_section/${courses[index]._id}`,
-				{ section },
-				true,
-				undefined,
-				token,
-			)
-			// New values
-			section = ''
-			courses[index].sections = [dataFetch.body.section, ...courses[index].sections]
-			addToast({
-				message: 'Se ha agregado la sección exitosamente',
-				type: 'success',
-			})
-		} catch (err) {
-			addToast({
-				message: err.message,
-				type: 'error',
-			})
-		}
-	}
-
-	async function addTeacher(e: KeyboardEvent, index: number) {
-		const target = e.target as HTMLInputElement
-		const indexC = positionCourse
-		try {
-			await API.fetchData(
-				'post',
-				`${variables.API}/api/course/add_teacher_section/${target.value}/${target.dataset.id}`,
-				undefined,
-				true,
-				undefined,
-				token,
-			)
-			courses[indexC].sections[index].header_teacher = target.value
-		} catch (err) {
-			addToast({
-				message: err.message,
-				type: 'error',
-			})
-		}
-	}
-
-	async function deleteSection(id: string) {
-		try {
-			const index = positionCourse
-			await API.fetchDeleteData(
-				`${variables.API}/api/course/delete_section/${id}`,
-				true,
-				token,
-			)
-			// Delete
-			courses[index].sections = courses[index].sections.filter((section) => {
-				if (section._id !== id) return section
-			})
-			addToast({
-				message: 'Se ha eliminado la sección exitosamente',
-				type: 'success',
-			})
-		} catch (err) {
-			addToast({
-				message: err.message,
-				type: 'error',
-			})
-		}
-	}
 </script>
 
 <Panel>
@@ -404,10 +316,8 @@
 					<td>{course.cycle.cycle}</td>
 					<td>{course.level}°</td>
 					<td>
-						<ButtonIcon
-							clickFunction={() => {
-								toggleSections(i)
-							}}
+						<AIcon
+							href={`/admin/secciones/${course._id}`}
 							classItem={'fa-solid fa-cubes'}
 						/>
 					</td>
@@ -533,51 +443,6 @@
 				class="Form__button Down"><i class="fa-solid fa-trash-can" /> Eliminar curso</button
 			>
 		</Form>
-	</Modal>
-{/if}
-
-{#if modalSections}
-	<Modal onClose={toggleSections}>
-		<h2 slot="title">Secciones {courses[positionCourse].course}</h2>
-		<Form form={newSection}>
-			<label for="section">Nombre secci&oacute;n</label>
-			<Input bind:value={section} id={'section'} />
-			<Button type={'submit'}>Agregar secci&oacute;n</Button>
-		</Form>
-		<br />
-		<Table header={['Sección', 'Profesor jefe', '']}>
-			{#each courses[positionCourse].sections as section, i}
-				<tr>
-					<td>{section.section}</td>
-					<td>
-						<Select
-							dataId={section._id}
-							change={(e) => addTeacher(e, i)}
-							value={section?.header_teacher}
-							id={'teacher'}
-						>
-							<option value="">Sin asignar</option>
-							{#each teachers as teacher}
-								<option value={teacher._id}
-									>{teacher.user.name} {teacher.user.first_lastname}</option
-								>
-							{/each}
-						</Select>
-					</td>
-					<td>
-						<ButtonIcon
-							title={'Eliminar sección'}
-							clickFunction={() => {
-								deleteSection(section._id)
-							}}
-							classItem={'fa-solid fa-minus'}
-						/>
-					</td>
-				</tr>
-			{:else}
-				<td>No hay datos...</td>
-			{/each}
-		</Table>
 	</Modal>
 {/if}
 
