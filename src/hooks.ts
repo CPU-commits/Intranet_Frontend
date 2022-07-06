@@ -17,11 +17,20 @@ export async function getSession(event){
         }
     }
     // Get session
-    const session = await (await redisInstance).get(cookies.token)
-    // Return data
-    return {
-        authenticated: true,
-        token: cookies.token,
-        user: JSON.parse(session),
+    try {
+        const redis = await redisInstance()
+        const session = await redis.get(cookies.token)
+        if (!session)
+            throw new Error('Invalid session')
+        // Return data
+        return {
+            authenticated: true,
+            token: cookies.token,
+            user: JSON.parse(session),
+        }
+    } catch(err) {
+        return {
+            authenticated: false,
+        }
     }
 }
