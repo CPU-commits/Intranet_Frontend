@@ -2,16 +2,26 @@ type ToDo = {
     (n: number): Promise<number>,
 }
 
-export default async function(total: number, f: ToDo, max = 30) {
+export default async function(total: number, f: ToDo, max = 30, element?: HTMLElement) {
     // Init
     let count = max
     let running = false
     // Body
-    const body = document.body
+    let elementScroll: HTMLElement
+    if (element){
+        elementScroll = element
+    }else{
+        elementScroll = document.body
+    }
     if(total > max) {
-        body.onscroll = async () =>{
-            const myPosition = window.scrollY + window.innerHeight
-            if(myPosition / body.clientHeight >= 0.5 && !running && count < total){
+        elementScroll.onscroll = async () => {
+            let myPosition: number
+            if (elementScroll !== document.body) {
+                myPosition = elementScroll.scrollTop + elementScroll.clientHeight
+            }else{
+                myPosition = elementScroll.clientHeight - (elementScroll.getBoundingClientRect().bottom - window.innerHeight)
+            }
+            if(myPosition / elementScroll.scrollHeight >= 0.6 && !running && count < total){
                 running = true
                 count = await f(count)
                 running = false
