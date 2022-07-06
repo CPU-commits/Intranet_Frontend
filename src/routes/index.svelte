@@ -1,4 +1,18 @@
+<script lang="ts" context="module">
+	export function load({ url }) {
+		let redirect = url.searchParams.get('redirect')
+		return {
+			status: 200,
+			props: {
+				redirect: redirect ? redirect : null,
+			},
+		}
+	}
+</script>
+
 <script lang="ts">
+	export let redirect: string
+
 	import Form from '$components/HTML/Form.svelte'
 	import Input from '$components/HTML/Input.svelte'
 	import Button from '$components/HTML/Button.svelte'
@@ -15,7 +29,9 @@
 	async function logIn() {
 		try {
 			await API.fetchData('post', '/auth/login', userForm)
-			goto('/inicio')
+			let url = '/inicio'
+			if (redirect) url = redirect
+			window.location.replace(url)
 		} catch (err) {
 			addToast({
 				message: err.message,
