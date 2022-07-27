@@ -1,33 +1,18 @@
-export enum ItemTypeEnum {
-    'equal',
-    'custom',
-    '',
-}
+import type { ItemTypeEnum, QuestionTypeEnum } from "./form.model"
 
-export enum QuestionTypeEnum {
-    '',
-    'alternatives',
-    'alternatives_correct',
-    'written',
-}
-
-export type Alterative = {
-    alternative: string
-}
-
-export type ItemQuestion = {
+export type ItemQuestionType = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     question: any
     type: keyof typeof QuestionTypeEnum
-    alternatives: Array<Alterative>
     answers: Array<string>
-    correct: number
-    points: string
+    points?: string
+    correct?: number
+    answer?: string
 }
 
 export type ItemType = {
     title: string
-    type: keyof typeof ItemTypeEnum
+    points_type: keyof typeof ItemTypeEnum
     points?: string
-    questions: Array<ItemQuestion>
+    questions: Array<ItemQuestionType>
 }
