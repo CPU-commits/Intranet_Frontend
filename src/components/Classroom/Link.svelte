@@ -11,35 +11,50 @@
 	export let link: Link
 	export let edit: boolean = false
 	export let deleteMe: DeleteMe = null
+	export let minimalist = false
 </script>
 
-<article class="File">
+{#if !minimalist}
+	<article class="Link">
+		<a class="LinkA" href={link.link} target="_blank" rel="noopener noreferrer">
+			<header>
+				<i class="fa-solid fa-link" />
+			</header>
+			<div class="Link__content">
+				<h3>{link.title}</h3>
+				<small>{link.link}</small>
+			</div>
+		</a>
+		{#if edit}
+			<aside>
+				<ButtonIcon clickFunction={deleteMe} classItem={'fa-solid fa-xmark'} />
+			</aside>
+		{/if}
+	</article>
+{:else}
 	<a href={link.link} target="_blank" rel="noopener noreferrer">
-		<header>
+		<article class="LinkMin">
+			<span>┈</span>
 			<i class="fa-solid fa-link" />
-		</header>
-		<div class="File__content">
-			<h3>{link.title}</h3>
-			<small>{link.link}</small>
-		</div>
+			<h4>{link.title}</h4>
+		</article>
 	</a>
-	{#if edit}
-		<aside>
-			<ButtonIcon clickFunction={deleteMe} classItem={'fa-solid fa-xmark'} />
-		</aside>
-	{/if}
-</article>
+{/if}
 
 <style>
-	a {
-		text-decoration: none;
+	.LinkA {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		position: relative;
 	}
 
-	.File {
+	a {
+		text-decoration: none;
+		width: fit-content;
+	}
+
+	.Link {
 		cursor: pointer;
 		width: 100%;
 		max-width: 500px;
@@ -66,7 +81,7 @@
 		font-size: 1.2rem;
 	}
 
-	.File__content {
+	.Link__content {
 		display: flex;
 		flex-direction: column;
 		padding: 10px;
@@ -77,5 +92,25 @@
 		position: absolute;
 		right: 10px;
 		top: 20px;
+	}
+
+	.LinkMin {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		cursor: pointer;
+		width: fit-content;
+	}
+
+	.LinkMin i {
+		font-size: 1rem;
+	}
+
+	.LinkMin:hover h4 {
+		color: var(--color-main);
+	}
+
+	.LinkMin h4 {
+		transition: all 0.4s;
 	}
 </style>

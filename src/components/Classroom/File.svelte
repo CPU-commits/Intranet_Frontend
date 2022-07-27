@@ -17,6 +17,7 @@
 	export let token: string = ''
 	export let canDownload: boolean = true
 	export let deleteMe: DeleteMe = null
+	export let minimalist = false
 
 	async function downloadFile() {
 		if (canDownload) {
@@ -37,22 +38,30 @@
 	}
 </script>
 
-<article class="File">
-	<div class="File__container" on:click={downloadFile}>
-		<header>
-			<i class={getIcon(file.type)} />
-		</header>
-		<div class="File__content">
-			<h3>{file.title}</h3>
-			<small>{formatDate(file.date)}</small>
+{#if !minimalist}
+	<article class="File">
+		<div class="File__container" on:click={downloadFile}>
+			<header>
+				<i class={getIcon(file.type)} />
+			</header>
+			<div class="File__content">
+				<h3>{file.title}</h3>
+				<small>{formatDate(file.date)}</small>
+			</div>
 		</div>
-	</div>
-	{#if edit}
-		<aside>
-			<ButtonIcon clickFunction={deleteMe} classItem={'fa-solid fa-xmark'} />
-		</aside>
-	{/if}
-</article>
+		{#if edit}
+			<aside>
+				<ButtonIcon clickFunction={deleteMe} classItem={'fa-solid fa-xmark'} />
+			</aside>
+		{/if}
+	</article>
+{:else}
+	<article class="FileMin" on:click={downloadFile}>
+		<span>┈</span>
+		<i class={getIcon(file.type)} />
+		<h4>{file.title}</h4>
+	</article>
+{/if}
 
 <style>
 	.File {
@@ -98,5 +107,25 @@
 		position: absolute;
 		right: 10px;
 		top: 20px;
+	}
+
+	.FileMin {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		cursor: pointer;
+		width: fit-content;
+	}
+
+	.FileMin i {
+		font-size: 1.1rem;
+	}
+
+	.FileMin:hover h4 {
+		color: var(--color-main);
+	}
+
+	.FileMin h4 {
+		transition: all 0.4s;
 	}
 </style>

@@ -9,13 +9,13 @@
 	export let item: ItemType
 	export let number: number
 	export let checked: number
-	export let type: string
+	export let type: string | boolean
 	export let destroy: (index: number) => void
 	export let quill: Quill
 	export let question: number
 
 	function changeItem() {
-		quill.setContents(item.questions[question].question)
+		if (quill) quill.setContents(item.questions[question].question)
 	}
 </script>
 
@@ -30,12 +30,12 @@
 		</header>
 		{#if type === 'true'}
 			<label for="score">Asignaci&oacute;n de puntaje</label>
-			<Select id={'score'} bind:value={item.type}>
+			<Select id={'score'} bind:value={item.points_type}>
 				<option value="">Seleccionar una distribuci&oacute;n</option>
 				<option value="equal">Puntaje distribuido equitativamente</option>
 				<option value="custom">Puntaje personalizado</option>
 			</Select>
-			{#if item.type === 'equal'}
+			{#if item.points_type === 'equal'}
 				<div class="Equal">
 					<Input
 						type={'number'}

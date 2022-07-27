@@ -13,6 +13,10 @@
 	export let question: number
 	export let quill: Quill
 
+	function setInitQuestion() {
+		if (item.questions[question]?.question) quill.setContents(item.questions[question].question)
+	}
+
 	function newQuestion() {
 		if (item.questions.length !== 100) {
 			item.questions = [
@@ -20,7 +24,6 @@
 				{
 					question: '',
 					type: '',
-					alternatives: [],
 					answers: [],
 					correct: 0,
 					points: '0',
@@ -35,16 +38,7 @@
 	}
 
 	function newAnswer() {
-		if (item.questions[question].type === 'written') {
-			item.questions[question].answers = [...item.questions[question].answers, '']
-		} else {
-			item.questions[question].alternatives = [
-				...item.questions[question].alternatives,
-				{
-					alternative: '',
-				},
-			]
-		}
+		item.questions[question].answers = [...item.questions[question].answers, '']
 	}
 
 	function deleteQuestion() {
@@ -60,11 +54,6 @@
 				type: 'error',
 			})
 		}
-	}
-
-	function deleteAlternative(index: number) {
-		item.questions[question].alternatives.splice(index, 1)
-		item.questions[question].alternatives = item.questions[question].alternatives
 	}
 
 	function deleteAnswer(index: number) {
@@ -102,10 +91,11 @@
 		focusDown={() => {
 			item.questions[question].question = quill.getContents()
 		}}
+		beforeMount={setInitQuestion}
 		placeholder={'Pregunta'}
 		bind:value={quill}
 	/>
-	{#if item.type === 'custom' && item.questions[question].type !== 'alternatives'}
+	{#if item.points_type === 'custom' && item.questions[question].type !== 'alternatives'}
 		<div class="Form__questions--points">
 			<Input
 				placeholder={'Puntaje pregunta'}
@@ -132,7 +122,7 @@
 	{#if item.questions[question].type.includes('alternatives')}
 		<h4>Alternativas</h4>
 		<section class="Answers">
-			{#each item.questions[question].alternatives as alternative, i}
+			{#each item.questions[question].answers as alternative, i}
 				<div class="Answer">
 					<span>{i + 1})</span>
 					{#if item.questions[question].type === 'alternatives_correct'}
@@ -145,13 +135,13 @@
 					{/if}
 					<Input
 						placeholder={'Alternativa'}
-						bind:value={alternative.alternative}
+						bind:value={alternative}
 						id={'alternative'}
 					/>
 					<ButtonIcon
 						title={'Eliminar alternativa'}
 						classItem={'fa-solid fa-xmark'}
-						clickFunction={() => deleteAlternative(i)}
+						clickFunction={() => deleteAnswer(i)}
 					/>
 				</div>
 			{/each}

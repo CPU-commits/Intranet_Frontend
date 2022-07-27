@@ -13,6 +13,7 @@
 	import { addToast } from '$stores/toasts'
 	import API from '$utils/APIModule'
 	import { isValidHttpUrl } from '$utils/format'
+	import Attached from './Attached.svelte'
 	import File from './File.svelte'
 	import Link from './Link.svelte'
 
@@ -23,43 +24,13 @@
 	export let user_name: string
 
 	let text: string = ''
-	let linkObj = {
-		title: '',
-		link: '',
+	type TypeObj = {
+		title: string
+		link: string
 	}
-	// Modal
-	let cloud: boolean = false
-	let link: boolean = false
-	const toggleCloud = () => (cloud = !cloud)
-	const toggleLink = () => (link = !link)
 	// Data
 	let filesAttached: Array<UserFiles> = []
-	let linksAttached: Array<typeof linkObj> = []
-
-	function addLink() {
-		try {
-			if (linkObj.title.length < 3 || linkObj.title.length > 100)
-				throw new Error('El titulo debe tener mín. 3 y máx 100 cárac.')
-			if (!isValidHttpUrl(linkObj.link)) throw new Error('Debe ingresar un enlace válido')
-			linksAttached = [
-				...linksAttached,
-				{
-					title: linkObj.title,
-					link: linkObj.link,
-				},
-			]
-			linkObj = {
-				title: '',
-				link: '',
-			}
-			link = false
-		} catch (err) {
-			addToast({
-				message: err.message,
-				type: 'error',
-			})
-		}
-	}
+	let linksAttached: Array<TypeObj> = []
 
 	function deleteFile(index: number) {
 		filesAttached.splice(index, 1)
@@ -107,7 +78,7 @@
 					attached: attached.map((att, i) => {
 						const type = att.type as keyof typeof AttachedType
 						if (type === 'link') {
-							const attachedLink = att as typeof linkObj
+							const attachedLink = att as TypeObj
 							return {
 								type,
 								_id: dataFetch.body.attached_ids[i],
@@ -131,7 +102,6 @@
 				},
 				...publications,
 			]
-			console.log(publications)
 			addToast({
 				message: 'Se ha creado la publicación exitosamente',
 				type: 'success',
@@ -166,44 +136,13 @@
 			</section>
 		{/if}
 		<footer class="Publication__writting--footer">
-			<div>
-				<ButtonIcon
-					title={'Adjuntar archivos'}
-					classItem={'fa-solid fa-paperclip'}
-					clickFunction={toggleCloud}
-				/>
-				<ButtonIcon
-					title={'Añadir enlace'}
-					classItem={'fa-solid fa-link'}
-					clickFunction={toggleLink}
-				/>
-			</div>
+			<Attached bind:filesAttached bind:linksAttached {token} />
 			<div class="Publication--footer__button">
 				<Button click={uploadPublication} type={'button'}>Publicar</Button>
 			</div>
 		</footer>
 	</div>
 </article>
-
-{#if cloud}
-	<Cloud bind:filesAttached {token} bind:modal={cloud} />
-{/if}
-
-{#if link}
-	<Modal onClose={toggleLink}>
-		<h2 slot="title">Agregar enlace</h2>
-		<Form form={addLink}>
-			<label for="title">Titulo</label>
-			<Input bind:value={linkObj.title} id={'title'} />
-			<label for="link">Enlace</label>
-			<Input bind:value={linkObj.link} type={'url'} id={'link'} />
-			{#if linkObj.link.startsWith('http:')}
-				<small><i class="fa-solid fa-bomb" /> No es un enlace seguro</small>
-			{/if}
-			<Button type={'submit'}>Agregar enlace</Button>
-		</Form>
-	</Modal>
-{/if}
 
 <style>
 	.Publication {
@@ -239,16 +178,5 @@
 		justify-content: center;
 		align-items: center;
 		gap: 15px;
-	}
-
-	small,
-	small i {
-		color: white;
-		padding: 3px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background-color: var(--color-danger);
-		border-radius: 3px;
 	}
 </style>
