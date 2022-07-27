@@ -4,7 +4,7 @@
 
 <section class="Table">
 	<table>
-		<thead>
+		<thead class="Thead">
 			<tr>
 				{#each header as tdElement}
 					<td>{@html tdElement}</td>

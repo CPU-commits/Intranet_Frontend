@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let form
+	export let form: (...any: any) => void
 </script>
 
 <form class="Form" on:submit|preventDefault={form}>

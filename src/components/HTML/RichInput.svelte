@@ -4,8 +4,9 @@
 	export let readOnly = false
 	export let placeholder = ''
 	export let body = ''
-	export let value: QuillType
+	export let value: QuillType = null
 	export let focusDown: (...any: any) => void = null
+	export let beforeMount: (...any: any) => void = null
 
 	import { onMount } from 'svelte'
 
@@ -51,6 +52,7 @@
 			value.root.addEventListener('focusout', () => {
 				focusDown()
 			})
+		if (beforeMount) beforeMount()
 	})
 </script>
 
@@ -60,4 +62,8 @@
 
 <style>
 	@import 'https://cdn.quilljs.com/1.3.6/quill.snow.css';
+
+	#editor {
+		width: 100%;
+	}
 </style>

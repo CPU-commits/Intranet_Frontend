@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let value: any
-	export let id: string
+	export let id: string = ''
 	export let type = 'text'
 	export let placeholder = ''
 	export let keyup = () => {}

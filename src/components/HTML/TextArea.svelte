@@ -1,9 +1,10 @@
 <script lang="ts">
 	export let value: string
 	export let placeholder = ''
+	export let keydown: (...any: any) => void = null
 </script>
 
-<textarea bind:value {placeholder} />
+<textarea on:keydown={keydown} bind:value {placeholder} />
 
 <style lang="scss">
 	textarea {

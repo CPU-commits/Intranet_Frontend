@@ -13,6 +13,8 @@
 	export let filter: Filter = {
 		filter: false,
 	}
+	export let onChange: () => void = null
+	export let multiple = false
 
 	function onFileSelected(e) {
 		if (filter.filter) {
@@ -25,10 +27,11 @@
 				return
 			}
 		}
+		if (onChange) onChange()
 	}
 </script>
 
-<input on:change={onFileSelected} {accept} bind:files type="file" {id} />
+<input {multiple} {accept} bind:files type="file" {id} on:change={onFileSelected} />
 
 <style lang="scss">
 	input {

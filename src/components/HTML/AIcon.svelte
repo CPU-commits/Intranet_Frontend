@@ -3,9 +3,10 @@
 	export let title = ''
 	export let href: string
 	export let active = false
+	export let target = ''
 </script>
 
-<a sveltekit:prefetch class:Actived={active} {href} {title}> <i class={classItem} /></a>
+<a {target} sveltekit:prefetch class:Actived={active} {href} {title}> <i class={classItem} /></a>
 
 <style>
 	a {
