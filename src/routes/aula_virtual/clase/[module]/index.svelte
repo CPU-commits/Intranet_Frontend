@@ -44,6 +44,7 @@
 		try {
 			await replaceData(true)
 		} catch (err) {
+			running = false
 			publications = []
 			addToast({
 				message: err.message,

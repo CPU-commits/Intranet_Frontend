@@ -1,7 +1,6 @@
 <script lang="ts" context="module">
 	export async function load({ session, params, url }) {
 		try {
-			console.log(params.module)
 			const dataFetch = await API.fetchGetData(
 				`${variables.API_CLASSROOM_READ}/api/classroom/modules/get_module/${params.module}`,
 				false,
