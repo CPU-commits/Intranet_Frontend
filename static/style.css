@@ -33,6 +33,10 @@ button {
 }
 
 /* Tables */
+.Thead tr td i {
+    color: var(--color-main);
+}
+
 .Tbody tr{
     border-bottom: 1px var(--color-light) solid;
 }
@@ -61,4 +65,5 @@ button {
     --color-danger: #a70a1f;
     --color-info: #1dc2e0;
     --color-success: var(--color-main);
+    --color-warning: #f8d300;
 }
