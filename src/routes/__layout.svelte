@@ -40,5 +40,19 @@
 {/if}
 
 <main>
-	<slot />
+	<div>
+		<slot />
+	</div>
 </main>
+
+<style>
+	main {
+		display: flex;
+		justify-content: center;
+	}
+
+	main div {
+		width: 100%;
+		max-width: 1600px;
+	}
+</style>
