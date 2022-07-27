@@ -169,6 +169,7 @@
 		try {
 			const validators = validatorsStudent(formStudent)
 			if (!validators.success) throw new Error(validators.message)
+            const registration_number = formStudent.registration_number
 			const dataFetch = await API.fetchData(
 				'post',
 				`${variables.API}/api/students/new_student`,
@@ -177,8 +178,7 @@
 				undefined,
 				token,
 			)
-			console.log(dataFetch)
-			initForm(dataFetch.body.student)
+			initForm({ ...dataFetch.body.student, registration_number })
 			addToast({
 				message: 'Se ha agregado el estudiante exitosamente',
 				type: 'success',

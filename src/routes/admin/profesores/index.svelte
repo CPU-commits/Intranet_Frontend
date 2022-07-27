@@ -180,7 +180,7 @@
 			)
 			initForm(dataFetch.body.teacher)
 			addToast({
-				message: 'Se ha agregado el directivo exitosamente',
+				message: 'Se ha agregado el profesor exitosamente',
 				type: 'success',
 			})
 		} catch (err) {
@@ -207,7 +207,7 @@
 			toggleModalEdit()
 			teachers.users[index] = teacherEdit
 			addToast({
-				message: 'Se ha editado con éxito el directivo',
+				message: 'Se ha editado con éxito el profesor',
 				type: 'success',
 			})
 		} catch (err) {
@@ -266,7 +266,7 @@
 			initStatusForm()
 			teachers.users[index].user.status = teachers.users[index].user.status === 1 ? 0 : 1
 			addToast({
-				message: 'Se ha cambiado el estado del directivo exitosamente',
+				message: 'Se ha cambiado el estado del profesor exitosamente',
 				type: 'success',
 			})
 		} catch (err) {
