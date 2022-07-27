@@ -6,7 +6,7 @@
 	import API from '$utils/APIModule'
 	import downloadFileURL from '$utils/downloadFileURL'
 	import { formatDate } from '$utils/format'
-	import getIcon from '$utils/getIcon'
+	import { getIcon } from '$utils/getIcon'
 
 	export let file: UserFiles
 	export let token: string
@@ -19,7 +19,6 @@
 				true,
 				token,
 			)
-			const ext = file.filename.split('.')
 			downloadFileURL(dataFetch.body.token)
 		} catch (err) {
 			addToast({
