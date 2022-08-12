@@ -49,22 +49,23 @@
 		if (student.access.status === 'revised') return 'Formulario evaluado/revisado'
 	}
 	// Set headers
-	const now = new Date()
+	const now = new Date().getTime()
 	header = ['Estudiante', 'RUT']
 	if (work.type === 'form') {
 		header.push('Acceso')
-		if (new Date(work.date_limit) < now && formHasPoints)
-			header.push('Evaluado (%)', 'Puntaje', 'Evaluar')
+		if (new Date(work.date_limit).getTime() < now && formHasPoints)
+			header.push('Evaluado (%)', 'Puntaje', work.is_revised ? 'Reevaluar' : 'Evaluar')
 		if (!formHasPoints) header.push('Ver respuestas')
 	} else if (work.type === 'files') {
 		header.push('Estado')
-		if (new Date(work.date_limit) < now)
+		if (new Date(work.date_limit).getTime() < now) {
 			header.push(
 				'<i class="fa-solid fa-file-arrow-up"></i> Archivos',
 				'Fecha de Subida',
 				'Puntaje',
-				'Evaluar',
+				work.is_revised ? 'Reevaluar' : 'Evaluar',
 			)
+		}
 	}
 
 	async function grade() {
@@ -153,9 +154,10 @@
 				})
 			}
 			const studentId = studentE.user._id
+			const route = !work.is_revised ? 'upload_evaluate_files' : 'upload_reevaluate_files'
 			await API.fetchData(
 				'post',
-				`${variables.API_CLASSROOM_WRITE}/api/classroom/works/upload_evaluate_files/${work._id}/${studentId}`,
+				`${variables.API_CLASSROOM_WRITE}/api/classroom/works/${route}/${work._id}/${studentId}`,
 				data,
 				true,
 				undefined,
@@ -190,7 +192,7 @@
 					? getStudentStatusForm(student)
 					: getStudentStatusFiles(student)}</td
 			>
-			{#if new Date(work.date_limit) < now}
+			{#if new Date(work.date_limit).getTime() < now}
 				{#if work.type === 'form'}
 					{#if formHasPoints}
 						<td>
@@ -205,7 +207,7 @@
 								: '0'}/{totalPoints}</td
 						>
 						<td>
-							{#if student.access && !work.is_revised}
+							{#if student.access}
 								<AIcon
 									href={`/aula_virtual/formulario/${idWork}/estudiante/${student.user._id}`}
 									target={'_blank'}
@@ -225,7 +227,7 @@
 							/></td
 						>
 					{/if}
-				{:else if work.type === 'files' && new Date(work.date_limit) < now}
+				{:else if work.type === 'files' && new Date(work.date_limit).getTime() < now}
 					{#if student.files_uploaded}
 						<td>
 							<Button click={() => downloadFiles(student.user._id, i)} type="button">
@@ -236,17 +238,19 @@
 						<td><i class="fa-solid fa-ban" /></td>
 					{/if}
 					<td
-						class={new Date(student.files_uploaded.date) < new Date(work.time_limit)
+						class={new Date(student.files_uploaded.date).getTime() <
+						new Date(work.date_limit).getTime()
 							? 'Success'
 							: 'Fail'}
 					>
 						{formatDate(student.files_uploaded.date)}
-						{new Date(student.files_uploaded.date) < new Date(work.time_limit)
+						{new Date(student.files_uploaded.date).getTime() <
+						new Date(work.date_limit).getTime()
 							? '(A tiempo)'
 							: '(Atrasado)'}
 					</td>
 					<td>
-						{student.files_uploaded
+						{student?.files_uploaded?.evaluate
 							? student.files_uploaded.evaluate.reduce((a, b) => {
 									return a + b.points
 							  }, 0)
@@ -278,10 +282,10 @@
 	{/each}
 </Table>
 
-{#if new Date(work.date_limit) < now}
+{#if new Date(work.date_limit).getTime() < now}
 	{#if work.is_revised}
 		<span><i class="fa-solid fa-circle-check" /> Trabajo revisado</span>
-	{:else if formHasPoints}
+	{:else if formHasPoints || work.type === 'files'}
 		<footer class="Button">
 			<Button
 				click={() => {
@@ -313,7 +317,13 @@
 					</tr>
 				{/each}
 			</Table>
-			<Button type="submit">Evaluar alumno</Button>
+			<Button type="submit">
+				{#if !work.is_revised}
+					Evaluar alumno
+				{:else}
+					Reevaluar alumno
+				{/if}
+			</Button>
 		</Form>
 	</Modal>
 {/if}

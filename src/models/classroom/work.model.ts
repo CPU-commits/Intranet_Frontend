@@ -48,6 +48,7 @@ export type Work = {
     date_limit: string
     time_limit: string
     form_access: string
+    module: string
     time_access: number
     date_upload: string
     date_update: string

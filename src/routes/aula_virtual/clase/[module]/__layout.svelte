@@ -8,7 +8,9 @@
 			)
 			const panel = {
 				isPanel:
-					!url.pathname.includes('trabajos') && !url.pathname.includes('calificaciones'),
+					!url.pathname.includes('trabajos') &&
+					!url.pathname.includes('calificaciones') &&
+					!url.pathname.includes('buscar'),
 				section: url.searchParams.get('section') ? url.searchParams.get('section') : 0,
 			}
 			return {

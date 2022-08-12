@@ -153,7 +153,8 @@
 			<span>
 				Fecha de subida:
 				<span
-					class={new Date(files_uploaded.date) > new Date(work.date_limit)
+					class={new Date(files_uploaded.date).getTime() >
+					new Date(work.date_limit).getTime()
 						? 'Fail'
 						: 'Success'}
 					>{formatDate(files_uploaded.date)}
@@ -178,7 +179,7 @@
 			></small
 		>
 		<small>Fecha evaluaci&oacute;n: {formatDate(grade.date)}</small>
-		{#if work.is_revised}
+		{#if work.type === 'files' && work.is_revised}
 			<footer class="Revise">
 				<Button click={toggleModalRev} type="button">Ver revisi&oacute;n</Button>
 			</footer>

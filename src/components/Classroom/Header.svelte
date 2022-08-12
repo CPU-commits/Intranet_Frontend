@@ -52,7 +52,9 @@
 <header class="Header">
 	<nav>
 		<a
-			class:Selected={!url.includes('trabajos') && !url.includes('calificaciones')}
+			class:Selected={!url.includes('trabajos') &&
+				!url.includes('calificaciones') &&
+				!url.includes('buscar')}
 			href="/aula_virtual/clase/{moduleData._id}"
 		>
 			Panel
@@ -97,15 +99,17 @@
 					<span>Sin sub-secciones...</span>
 				{/if}
 			</section>
-			<div class="Header__subject--button">
-				<ButtonIcon
-					title={'Añadir sub-sección'}
-					color={'white'}
-					hover={'white'}
-					clickFunction={toggleModal}
-					classItem={'fa-solid fa-plus'}
-				/>
-			</div>
+			{#if user_type === UserTypes.TEACHER}
+				<div class="Header__subject--button">
+					<ButtonIcon
+						title={'Añadir sub-sección'}
+						color={'white'}
+						hover={'white'}
+						clickFunction={toggleModal}
+						classItem={'fa-solid fa-plus'}
+					/>
+				</div>
+			{/if}
 		{/if}
 	</section>
 </header>
@@ -151,6 +155,9 @@
 	.Selected {
 		color: var(--color-main);
 		text-decoration: underline;
+		i {
+			color: var(--color-main);
+		}
 	}
 
 	.Header__subject {

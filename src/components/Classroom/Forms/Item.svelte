@@ -15,6 +15,7 @@
 	export let question: number
 
 	function changeItem() {
+		question = 0
 		if (quill) quill.setContents(item.questions[question].question)
 	}
 </script>

@@ -54,7 +54,7 @@
 					token,
 				),
 			])
-			gradePrograms = dataFetch[0].body.programs
+			gradePrograms = dataFetch[0].body.programs ? dataFetch[0].body.programs : []
 			forms = dataFetch[1].body.forms ? dataFetch[1].body.forms : []
 		} catch (err) {
 			addToast({

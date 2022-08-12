@@ -104,7 +104,7 @@
 						clearTimeout(timeout)
 						timeout = null
 					}
-					timeout = setTimeout(saveQuestion, 2000)
+					timeout = setTimeout(saveQuestion, 1000)
 				}}
 				placeholder={'Respuesta...'}
 				bind:value={question.answer}

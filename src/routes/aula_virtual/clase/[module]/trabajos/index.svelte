@@ -56,7 +56,7 @@
 	{/if}
 	{#if works}
 		{#each works as work}
-			<WorkCard {work} />
+			<WorkCard {token} {user_type} {work} />
 		{:else}
 			<figure class="NoWorks">
 				<img src="/img/no_works.svg" alt="Sin trabajos" />

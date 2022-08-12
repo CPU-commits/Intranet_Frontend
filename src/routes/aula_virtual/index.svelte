@@ -5,16 +5,19 @@
 			props: {
 				token: session.user.token,
 				user_type: session.user.user_type,
+				pathname: url.pathname,
 			},
 		}
 	}
 </script>
 
 <script lang="ts">
+	import ClassroomMenu from '$components/Classroom/ClassroomMenu.svelte'
 	import Module from '$components/Classroom/Module.svelte'
 	import SpinnerGet from '$components/SpinnerGet.svelte'
 	import { variables } from '$lib/variables'
 	import type { ClassroomModules } from '$models/classroom/modules'
+	import { UserTypes } from '$models/users/user_type.model'
 
 	import { addToast } from '$stores/toasts'
 
@@ -23,6 +26,7 @@
 	import { onMount } from 'svelte'
 
 	export let token: string
+	export let pathname: string
 	export let user_type: string
 
 	let modules: ClassroomModules[]
@@ -46,20 +50,9 @@
 </script>
 
 <section class="Classroom">
-	<nav class="Classroom__menu">
-		<a sveltekit:prefetch href="/aula_virtual">
-			<i class="fa-solid fa-chalkboard" />
-		</a>
-		<a sveltekit:prefetch href="/aula_virtual/calendario">
-			<i class="fa-solid fa-calendar-days" />
-		</a>
-		<a sveltekit:prefetch href="/aula_virtual/tarea">
-			<i class="fa-solid fa-thumbtack" />
-		</a>
-		<a sveltekit:prefetch href="/aula_virtual/">
-			<i class="fa-solid fa-marker" />
-		</a>
-	</nav>
+	{#if user_type === UserTypes.STUDENT || user_type === UserTypes.STUDENT_DIRECTIVE}
+		<ClassroomMenu {token} {pathname} />
+	{/if}
 	<section class="Classroom__modules">
 		{#if modules}
 			{#each modules as moduleData}
@@ -76,15 +69,6 @@
 <style>
 	.Classroom {
 		padding: 20px;
-	}
-
-	.Classroom__menu {
-		padding: 10px;
-		display: flex;
-		width: 100%;
-		justify-content: space-around;
-		box-sizing: border-box;
-		border: 2px solid var(--color-main);
 	}
 
 	.Classroom__modules {

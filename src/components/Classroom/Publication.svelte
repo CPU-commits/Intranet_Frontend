@@ -149,7 +149,7 @@
 	<footer class="Publication__footer">
 		<div class="Publication__footer--info">
 			<small>Publicado por <span>{publication.content.author}</span></small>
-			{#if publication.update_date !== publication.upload_date}
+			{#if publication.update_date.toString() !== publication.upload_date.toString()}
 				<small>(editado {formatDate(publication.update_date)})</small>
 			{/if}
 		</div>
