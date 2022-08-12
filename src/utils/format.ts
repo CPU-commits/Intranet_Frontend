@@ -5,19 +5,48 @@ export function formatDate(date: string | Date) {
     return moment(date).locale('es').utc().format('LLL')
 }
 
+export function formatMiniDate(date: string | Date) {
+    return moment(date).locale('es').utc().format('MM/DD HH:mm')
+}
+
 export function timeAgo(date: string | Date) {
     return moment(date).locale('es').utc().fromNow()
 }
 
+export function removeTime(date: string | Date) {
+    return moment(date).locale('es').utc().startOf('day').format('YYYY-MM-DD')
+}
+
+export function getOnlyTime(date: string | Date) {
+    return moment(date).locale('es').utc().format('HH:mm')
+}
+
 export function secondsToHoursFormat(seconds: number) {
-    const hours = seconds / (60**2)
+    const hours = seconds / (3600)
     let hoursFormat = `${Math.trunc(hours)}:`
-    hoursFormat += `${hours % 1 * 60}`
+    if (hoursFormat.length === 2)
+        hoursFormat = `0${hoursFormat}`
+    hoursFormat += `${Number((hours % 1).toFixed(2)) * 60}`
+    if (hoursFormat.length === 4){
+        const lastDigit = hoursFormat[3]
+        const string = hoursFormat
+        hoursFormat = ''
+        for (let i = 0; i < 3; i++)
+            hoursFormat += string[i]
+        hoursFormat += `0${lastDigit}`
+    }
     return hoursFormat
 }
 
+export function urlify(text: string) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g
+    return text.replace(urlRegex, function(url) {
+        return '<a target="_blank" class="Link" href="' + url + '">' + url + '</a>'
+    })
+}
+
 export function formatDateUTC(date: string | Date) {
-    return moment(date).locale('es').utc()
+    return moment(date).utcOffset(0, true).locale('es').utc().format('YYYY-MM-DD HH:mm')
 }
 
 export function intToChar(int: number) {

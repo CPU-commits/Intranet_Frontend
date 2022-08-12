@@ -46,10 +46,30 @@ button {
     padding: 15px;
 }
 
+.TbodySmall tr {
+    border-bottom: 1px var(--color-light) solid;
+}
+
+.TbodySmall tr td:first-child {
+    color: var(--color-main);
+    border-right: 1px solid var(--color-light);
+}
+
+.TbodySmall td {
+    text-align: center;
+    font-size: 0.8rem;
+    padding: 1px;
+}
+
 .TableVertical tr td:first-child {
     background-color: var(--color-main);
     border-bottom: 1px white solid;
     color: white;
+}
+
+/* Link */
+.Link {
+    color: var(--color-main);
 }
 
 :root {
@@ -61,6 +81,8 @@ button {
     /* News */
     --color-news: #fdbc48;
     --color-news-black: #101010;
+    /* Library */
+    --color-star: #fd4;
     /* Toast */
     --color-danger: #a70a1f;
     --color-info: #1dc2e0;

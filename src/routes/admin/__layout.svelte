@@ -2,7 +2,8 @@
 	export function load({ url, session }) {
 		if (
 			session?.user?.user_type !== UserTypes.DIRECTOR &&
-			session?.user?.user_type !== UserTypes.DIRECTIVE
+			session?.user?.user_type !== UserTypes.DIRECTIVE &&
+			session?.user?.user_type !== UserTypes.LIBRARIAN
 		) {
 			return {
 				status: 302,
