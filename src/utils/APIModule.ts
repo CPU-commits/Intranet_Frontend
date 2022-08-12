@@ -133,7 +133,7 @@ class APIModule {
                 }
             })
         spinner.set(false)
-        if(!response.success && config.responseType !== 'arraybuffer')
+        if(response.success === false)
             throw response
         return response
     }
