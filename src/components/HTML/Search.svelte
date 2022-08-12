@@ -12,7 +12,7 @@
 	<button on:click={search}>
 		<i class="fa-solid fa-magnifying-glass" />
 	</button>
-	<Input keyup={search} {placeholder} bind:value type={'text'} id={'search'} />
+	<Input keyup={search} {placeholder} bind:value type={'search'} id={'search'} />
 </div>
 
 <style lang="scss">

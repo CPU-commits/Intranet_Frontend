@@ -4,7 +4,7 @@
 	export let keydown: (...any: any) => void = null
 </script>
 
-<textarea on:keydown={keydown} bind:value {placeholder} />
+<textarea on:keyup={keydown} bind:value {placeholder} />
 
 <style lang="scss">
 	textarea {

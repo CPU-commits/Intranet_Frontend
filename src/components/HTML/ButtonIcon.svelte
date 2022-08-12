@@ -5,6 +5,7 @@
 	export let title = ''
 	export let clickFunction: any
 	export let color: string = null
+	export let selected: boolean = false
 	export let hover: string = 'var(--color-main)'
 
 	let btn: HTMLButtonElement
@@ -15,7 +16,7 @@
 	})
 </script>
 
-<button bind:this={btn} {title} on:click={clickFunction} type="button">
+<button class:Selected={selected} bind:this={btn} {title} on:click={clickFunction} type="button">
 	<i class={classItem} /></button
 >
 
@@ -33,5 +34,9 @@
 		font-size: 1rem;
 		transition: all 0.4s ease;
 		color: var(--color-i);
+	}
+
+	.Selected {
+		color: var(--color-main) !important;
 	}
 </style>

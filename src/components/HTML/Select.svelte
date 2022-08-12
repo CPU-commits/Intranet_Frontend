@@ -5,7 +5,7 @@
 	export let dataId = ''
 </script>
 
-<select data-id={dataId} on:change={change} bind:value {id}>
+<select data-id={dataId} bind:value {id} on:change={change}>
 	<slot />
 </select>
 
@@ -17,6 +17,7 @@
 		border: none;
 		border-bottom: 3px var(--color-light) solid;
 		transition: all 0.4s ease-in-out;
+		background-color: transparent;
 	}
 
 	select:focus {

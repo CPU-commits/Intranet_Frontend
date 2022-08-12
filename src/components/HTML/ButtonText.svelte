@@ -21,6 +21,7 @@
 	button {
 		width: 100%;
 		padding: 8px;
+		font-size: 1rem;
 		border: none;
 		background-color: transparent;
 		color: var(--color-button);
