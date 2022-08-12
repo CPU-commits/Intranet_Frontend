@@ -5,6 +5,7 @@ export enum UserType {
     'd',
     'e',
     'f',
+    'g',
 }
 
 export enum UserTypes {
@@ -14,4 +15,5 @@ export enum UserTypes {
     TEACHER = 'd',
     DIRECTIVE = 'e',
     DIRECTOR = 'f',
+    LIBRARIAN = 'g',
 }
