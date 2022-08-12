@@ -1,6 +1,20 @@
+<script lang="ts">
+	import { onMount } from 'svelte'
+
+	export let nav = true
+
+	let content: HTMLElement
+
+	onMount(() => {
+		if (!nav) content.style.marginTop = '0px'
+	})
+</script>
+
 <section class="Panel">
-	<nav><slot name="nav" /></nav>
-	<div class="Panel__content">
+	{#if nav}
+		<nav><slot name="nav" /></nav>
+	{/if}
+	<div bind:this={content} class="Panel__content">
 		<slot />
 	</div>
 </section>
