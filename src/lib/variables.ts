@@ -5,6 +5,7 @@ export const variables = {
     API_NOTIFICATIONS: import.meta.env.VITE_API_NOTIFICATIONS.toString(),
     API_CLASSROOM_READ: import.meta.env.VITE_API_CLASSROOM_READ.toString(),
     API_CLASSROOM_WRITE: import.meta.env.VITE_API_CLASSROOM_WRITE.toString(),
+    API_LIBRARY: import.meta.env.VITE_API_LIBRARY.toString(),
     CLIENT: import.meta.env.VITE_CLIENT,
     NODE_ENV: import.meta.env.VITE_NODE_ENV,
     redis: {
