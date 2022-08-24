@@ -10,6 +10,7 @@
 			status: 200,
 			props: {
 				token: session.user.token,
+				user_type: session.user.user_type,
 				pathname: url.pathname,
 			},
 		}
@@ -32,6 +33,7 @@
 	import { onMount } from 'svelte'
 
 	export let token: string
+	export let user_type: string
 	export let pathname: string
 
 	let works: Array<Work & { status: number }>
@@ -61,7 +63,7 @@
 </script>
 
 <section class="Classroom">
-	<ClassroomMenu {pathname} />
+	<ClassroomMenu {pathname} {user_type} {token} />
 	<section class="Classroom__works">
 		{#if works}
 			{#each works as work}

@@ -17,7 +17,6 @@
 	import SpinnerGet from '$components/SpinnerGet.svelte'
 	import { variables } from '$lib/variables'
 	import type { ClassroomModules } from '$models/classroom/modules'
-	import { UserTypes } from '$models/users/user_type.model'
 
 	import { addToast } from '$stores/toasts'
 
@@ -50,9 +49,7 @@
 </script>
 
 <section class="Classroom">
-	{#if user_type === UserTypes.STUDENT || user_type === UserTypes.STUDENT_DIRECTIVE}
-		<ClassroomMenu {token} {pathname} />
-	{/if}
+	<ClassroomMenu {user_type} {token} {pathname} />
 	<section class="Classroom__modules">
 		{#if modules}
 			{#each modules as moduleData}
