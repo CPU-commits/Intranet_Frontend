@@ -72,6 +72,189 @@ button {
     color: var(--color-main);
 }
 
+/* Rich button */
+.RichButtonSelected {
+    border-bottom: 2px solid var(--color-main) !important;
+}
+
+.RichButtonSelected i {
+    color: var(--color-main)
+}
+
+.RichButton:disabled, .RichButton:disabled i {
+    color:  var(--color-light);
+}
+
+/* Rich input */
+.ProseMirror {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid var(--color-light);
+}
+
+.ProseMirror:focus {
+    outline: none;
+}
+
+.ProseMirror ul, .ProseMirror ol {
+    padding: 0 1rem;
+}
+
+.ProseMirrorBlockquote {
+    border-left: 4px solid #ccc;
+    padding: 0.5em 10px;
+    quotes: "\201C""\201D""\2018""\2019";
+}
+
+.ProseMirrorBlockquote:before {
+    color: #ccc;
+    content: open-quote;
+    font-size: 4em;
+    line-height: 0.1em;
+    margin-right: 0.25em;
+    vertical-align: -0.4em;
+}
+
+.ProseMirrorBlockquote p {
+    display: inline;
+}
+
+.PromiseMirrorTaskList {
+    padding: 0 !important;
+    list-style: none;
+}
+
+.PromiseMirrorTaskList li {
+    display: flex;
+    box-sizing: border-box;
+}
+
+.PromiseMirrorTaskList li label {
+    padding-right: 0.5rem;
+}
+
+.ProseMirror iframe {
+    width: 100%;
+    max-height: 400px;
+    display: flex;
+    justify-self: center;
+}
+
+.ProseMirrorTable {
+    border-collapse: collapse;
+    width: 100%;
+    border: 2px solid var(--color-light);
+}
+
+.ProseMirrorTable td {
+    padding: 8px;
+    border: 1px solid var(--color-light);
+}
+
+.ProseMirrorTable th {
+    background-color: #f1f3f5;
+    border-bottom: 1px solid var(--color-light);
+    font-weight: bold;
+    padding: 8px;
+    border: 1px solid #ced4da;
+}
+
+.ProseMirrorTable th p {
+    color: var(--color-main);
+}
+
+.ProseMirrorTable th td {
+    color: var(--color-main);
+}
+
+.ProseMirror img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.ProseMirror a {
+    color: var(--color-main);
+}
+
+.PromiseMirrorCode {
+    background-color:#111418;
+    padding: 5px;
+}
+
+.PromiseMirrorCode code {
+    color: #c9d1d9;
+}
+
+.hljs-doctag,.hljs-keyword,.hljs-meta .hljs-keyword,.hljs-template-tag,.hljs-template-variable,.hljs-type,.hljs-variable.language_, .hljs-function{
+    color: #38c7bd;
+}
+
+.hljs-title,.hljs-title.class_,.hljs-title.class_.inherited__,.hljs-title.function_{
+    color:#11b7d4;
+}
+
+.hljs-attr,.hljs-attribute,.hljs-literal,.hljs-meta,.hljs-number,.hljs-operator,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-variable{
+    color:#79c0ff
+}
+
+.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{
+    color:#a5d6ff
+}
+
+.hljs-params {
+    color: #c84054;
+}
+
+.hljs-built_in,.hljs-symbol{
+    color:#9a5fce;
+}
+
+.hljs-property {
+    color: #c7910c;
+}
+
+.hljs-code,.hljs-comment,.hljs-formula{
+    color:#8b949e
+}
+
+.hljs-name,.hljs-quote,.hljs-selector-pseudo,.hljs-selector-tag{
+    color:#7ee787
+}
+
+.hljs-subst{
+    color:#c9d1d9
+}
+
+.hljs-section{
+    color:#1f6feb;
+    font-weight:700
+}
+
+.hljs-bullet{
+    color:#f2cc60
+}
+
+.hljs-emphasis{
+    color:#c9d1d9;
+    font-style:italic
+}
+
+.hljs-strong{
+    color:#c9d1d9;
+    font-weight:700
+}
+
+.hljs-addition{
+    color:#aff5b4;
+    background-color:#033a16
+}
+
+.hljs-deletion{
+    color:#ffdcd7;
+    background-color:#67060c
+}
+
 :root {
     --color-main: #5867e8;
     --color-main-light: #f8faff;
