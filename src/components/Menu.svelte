@@ -1,5 +1,13 @@
 <script lang="ts">
+	import { variables } from '$lib/variables'
+
+	import { UserTypes } from '$models/users/user_type.model'
+
 	import type { UserSession } from '$models/userSession.model'
+	import type { VotingStatus } from '$models/voting.model'
+	import { voting } from '$stores/stores'
+	import { addToast } from '$stores/toasts'
+	import API from '$utils/APIModule'
 	import { onMount } from 'svelte'
 	import Notifications from './Notifications.svelte'
 
@@ -9,9 +17,27 @@
 
 	let menuOpen = false
 	let body: HTMLBodyElement
+	// Voting
+	let votingStatus: keyof typeof VotingStatus = 'closed'
 
-	onMount(() => {
+	onMount(async () => {
 		body = document.body as HTMLBodyElement
+		try {
+			if (
+				user?.user_type === UserTypes.STUDENT ||
+				user?.user_type === UserTypes.STUDENT_DIRECTIVE
+			) {
+				const dataFetch = await API.fetchGetData(
+					`${variables.API}/api/students/get_voting_status`,
+					true,
+					user.token,
+				)
+				votingStatus = dataFetch.body.status
+				voting.set(votingStatus)
+			}
+		} catch (err) {
+			console.error(err)
+		}
 	})
 
 	function toggleMenu() {
@@ -27,29 +53,45 @@
 		body.style.overflowY = 'initial'
 		menuOpen = false
 	}
+
+	async function logout() {
+		try {
+			await API.fetchData('post', `/auth/close_session`, undefined, true)
+			window.location.replace('/')
+		} catch (err) {
+			addToast({
+				message: 'Error al cerrar sesión',
+				type: 'error',
+			})
+		}
+	}
 </script>
 
 <nav class="Header" class:News={url.startsWith('/noticias')}>
 	<section class="Header__content">
 		<div class="Header__content--left">
-			<button on:click={toggleMenu} class="InvisibleButton">
-				<i class="fa-solid fa-bars" />
-			</button>
-			<a href="/">
+			{#if authenticated}
+				<button on:click={toggleMenu} class="InvisibleButton">
+					<i class="fa-solid fa-bars" />
+				</button>
+			{/if}
+			<a href={authenticated ? '/inicio' : '/'}>
 				<h2>CSAH Intranet</h2>
 			</a>
 		</div>
 		<div class="Header__content--main">
 			{#if authenticated}
 				<ul>
-					<li>
-						<a href="/aula_virtual" sveltekit:prefetch> Aula virtual </a>
-					</li>
+					{#if user?.user_type === UserTypes.TEACHER || user?.user_type === UserTypes.STUDENT || user?.user_type === UserTypes.STUDENT_DIRECTIVE}
+						<li>
+							<a href="/aula_virtual" sveltekit:prefetch> Aula virtual </a>
+						</li>
+					{/if}
 					<li>
 						<a href="/noticias" sveltekit:prefetch> Noticias </a>
 					</li>
 					<li>
-						<a href="/libro_vida" sveltekit:prefetch> Libro de vida </a>
+						<a href="/biblioteca" sveltekit:prefetch> Biblioteca </a>
 					</li>
 				</ul>
 			{/if}
@@ -61,7 +103,7 @@
 			<a href="/usuario">
 				<i class="fa-solid fa-user" />
 			</a>
-			{#if user?.user_type === 'd' || user?.user_type === 'f'}
+			{#if user?.user_type === UserTypes.DIRECTOR || user?.user_type === UserTypes.DIRECTIVE || user?.user_type === UserTypes.LIBRARIAN}
 				<a href="/admin">
 					<i class="fa-solid fa-gear" />
 				</a>
@@ -113,21 +155,23 @@
 					<i class="fa-solid fa-handshake-angle" /> <span>Bienestar estudiantil</span>
 				</li>
 			</a>
-			<a on:click={ahref} href="/votar">
-				<li class:selected={url.startsWith('/votar')}>
-					<i class="fa-solid fa-check-to-slot" /> <span>Votar</span>
-				</li>
-			</a>
+			{#if (user?.user_type === UserTypes.STUDENT || user?.user_type === UserTypes.STUDENT_DIRECTIVE) && votingStatus === 'in progress'}
+				<a on:click={ahref} href="/votar">
+					<li class:selected={url.startsWith('/votar')}>
+						<i class="fa-solid fa-check-to-slot" /> <span>Votar</span>
+					</li>
+				</a>
+			{/if}
 			<a on:click={ahref} href="/soporte">
 				<li class:selected={url.startsWith('/soporte')}>
 					<i class="fa-solid fa-circle-info" /> <span>Soporte</span>
 				</li>
 			</a>
 		</ul>
-		<a href="/auth/close_session" class="logout">
+		<button class="logout" on:click={logout}>
 			<i class="fa-solid fa-arrow-right-from-bracket" />
 			Cerrar sesi&oacute;n
-		</a>
+		</button>
 	</div>
 </menu>
 
@@ -302,6 +346,7 @@
 		bottom: 25px;
 		left: 25px;
 		position: absolute;
+		color: var(--color-dark);
 		font-size: 1.1rem;
 		transition: all 0.4s ease;
 		cursor: pointer;
