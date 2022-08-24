@@ -1,16 +1,30 @@
-<script lang="ts" context="module">
-	export function load({ session }) {
-		return {
-			status: 200,
-			props: {
-				token: session.user.token,
-			},
+<script context="module">
+	export async function load({ session }) {
+		try {
+			const dataFetch = await API.fetchGetData(
+				`${variables.API}/api/students/get_voting_status`,
+				false,
+				session.user.token,
+			)
+			return {
+				status: 200,
+				props: {
+					token: session.user.token,
+					status: dataFetch.body.status,
+				},
+			}
+		} catch (err) {
+			return {
+				status: err.statusCode,
+				error: err.message,
+			}
 		}
 	}
 </script>
 
 <script lang="ts">
 	export let token: string
+	export let status: keyof typeof VotingStatus
 
 	import Icons from '$components/Admin/Icons.svelte'
 	import Panel from '$components/Admin/Panel.svelte'
@@ -28,6 +42,7 @@
 	import { variables } from '$lib/variables'
 	import type { Section } from '$models/admin/courses.model'
 	import type { Student, Students } from '$models/admin/student.model'
+	import type { VotingStatus } from '$models/voting.model'
 	import { addToast } from '$stores/toasts'
 	import API from '$utils/APIModule'
 	import onscrollLoading from '$utils/onscrollLoading'
@@ -169,7 +184,7 @@
 		try {
 			const validators = validatorsStudent(formStudent)
 			if (!validators.success) throw new Error(validators.message)
-            const registration_number = formStudent.registration_number
+			const registration_number = formStudent.registration_number
 			const dataFetch = await API.fetchData(
 				'post',
 				`${variables.API}/api/students/new_student`,
@@ -207,10 +222,6 @@
 				undefined,
 				token,
 			)
-			console.log({
-				...studentEdit,
-				course: course !== '' ? course : '',
-			})
 			toggleModalEdit()
 			students.users[index] = studentEdit
 			addToast({
@@ -269,6 +280,13 @@
 			title={'Agregar estudiantes'}
 			href={'/admin/estudiantes/masivo'}
 			classItem={'fa-solid fa-user-group'}
+		/>
+		<AIcon
+			title={'Iniciar votaciones estudiantiles'}
+			href={status === 'opened'
+				? '/admin/estudiantes/votaciones'
+				: '/admin/estudiantes/votaciones/editar'}
+			classItem={'fa-solid fa-check-to-slot'}
 		/>
 	</Icons>
 	<h2>Estudiantes</h2>

@@ -16,10 +16,7 @@
 				</a>
 			{/if}
 			<a sveltekit:prefetch href="/admin/estudiantes">
-				<li
-					class:Selected={url === '/admin/estudiantes' ||
-						url === '/admin/estudiantes/masivo'}
-				>
+				<li class:Selected={url.startsWith('/admin/estudiantes')}>
 					<i class="fa-solid fa-graduation-cap" /> Estudiantes
 				</li>
 			</a>
