@@ -27,13 +27,28 @@
 			})
 		}
 	}
+
+	function getClassroomIcon() {
+		if (notification.notification.type === 'global') return ''
+		if (notification.notification.type_classroom === 'publication')
+			return '<i class="fa-solid fa-comment-dots"></i>'
+		if (notification.notification.type_classroom === 'work')
+			return '<i class="fa-solid fa-laptop-file"></i>'
+		if (notification.notification.type_classroom === 'grade')
+			return '<i class="fa-solid fa-pencil"></i>'
+	}
 </script>
 
 <article bind:this={element} class="Notification">
 	<a on:click={toogleMenu} href={notification.notification.url}>
-		<img src={notification.notification.img} alt={notification.notification.title} />
+		{#if notification.notification?.img}
+			<img src={notification.notification.img} alt={notification.notification.title} />
+		{/if}
 		<div class="Notification__text">
-			<h3>{notification.notification.title}</h3>
+			<h3>{notification.notification.title} {@html getClassroomIcon()}</h3>
+			{#if notification.notification.type === 'classroom'}
+				<span>Materia: {notification.notification.subject.subject}</span>
+			{/if}
 			<small>{timeAgo(notification.date)}</small>
 		</div>
 	</a>

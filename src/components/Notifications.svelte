@@ -22,8 +22,7 @@
 	let notifications: NotificationType[]
 	let notificationsRunning = false
 
-	onMount(() => {
-		/*
+	onMount(async () => {
 		const socket = io(`ws://localhost:7000`, {
 			extraHeaders: {
 				Authorization: token,
@@ -33,7 +32,6 @@
 			notificationNumber.update((v) => v + 1)
 		})
 		/* Students socket */
-		/*
 		if (user_type === UserTypes.STUDENT || user_type === UserTypes.STUDENT_DIRECTIVE) {
 			const socketStudents = io(`ws://localhost:7000/students`, {
 				extraHeaders: {
@@ -43,7 +41,18 @@
 			socketStudents.on('notify/students', () => {
 				notificationNumber.update((v) => v + 1)
 			})
-		}*/
+		}
+		// Get nofications count
+		try {
+			const dataFetch = await API.fetchGetData(
+				`${variables.API_NOTIFICATIONS}/api/notifications/get_count_notifications`,
+				false,
+				token,
+			)
+			notificationNumber.set(dataFetch.body.count)
+		} catch (err) {
+			console.error(err)
+		}
 	})
 
 	async function getNotifications(total = false, skip = 0) {
