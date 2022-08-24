@@ -1,16 +1,22 @@
 <script lang="ts" context="module">
-	export function load({ session }) {
+	export function load({ session, url }) {
 		return {
 			status: 200,
 			props: {
 				token: session.user.token,
+				user_type: session.user.user_type,
+				pathname: url.pathname,
 			},
 		}
 	}
 </script>
 
 <script lang="ts">
+	import ClassroomMenu from '$components/Classroom/ClassroomMenu.svelte'
+
 	export let token: string
+	export let pathname: string
+	export let user_type: string
 
 	import ButtonText from '$components/HTML/ButtonText.svelte'
 	import SpinnerGet from '$components/SpinnerGet.svelte'
@@ -45,6 +51,8 @@
 </script>
 
 <section class="Forms">
+	<ClassroomMenu {user_type} {token} {pathname} />
+	<br />
 	<h2><i class="fa-solid fa-clipboard" /> Formularios</h2>
 	<section class="Forms__yours">
 		<h3>Tus formularios</h3>

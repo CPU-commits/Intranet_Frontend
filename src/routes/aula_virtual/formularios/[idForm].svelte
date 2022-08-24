@@ -30,9 +30,8 @@
 
 	import { addToast } from '$stores/toasts'
 	import API from '$utils/APIModule'
-	import { deltaQuillToHtml, htmlToDelta } from '$utils/quill'
 	import { validateForm } from '$utils/validators'
-	import type Quill from 'quill'
+	import type { Editor } from '@tiptap/core'
 
 	import { onMount } from 'svelte'
 
@@ -40,7 +39,7 @@
 	export let token: string
 
 	let question: number = 0
-	let quill: Quill
+	let editor: Editor
 	let checked: number
 	// Data
 	let form: UserForm
@@ -66,7 +65,7 @@
 						const { answers, question, ...rest } = questionUn
 						return {
 							...rest,
-							question: htmlToDelta(question, document),
+							question,
 							answers: answers ? answers : [],
 						}
 					}),
@@ -118,7 +117,7 @@
 	function deleteItem(index: number) {
 		question = 0
 		checked = 0
-		if (quill) quill.setContents(form.items[checked].questions[question].question)
+		if (editor) editor.commands.setContent(form.items[checked].questions[question].question)
 		form.items.splice(index, 1)
 		form.items = form.items
 	}
@@ -136,7 +135,7 @@
 						const { question, points, ...rest } = questionData
 						return {
 							...rest,
-							question: deltaQuillToHtml(question),
+							question,
 							points: points ? parseInt(points) : undefined,
 						}
 					}),
@@ -202,7 +201,7 @@
 						destroy={() => deleteItem(i)}
 						type={hasPoints}
 						bind:question
-						bind:quill
+						bind:editor
 						bind:item
 						bind:checked
 						number={i}
@@ -217,7 +216,7 @@
 				/>
 			</section>
 			{#if form.items.length > 0 && checked !== undefined}
-				<Question bind:quill bind:question {checked} bind:item={form.items[checked]} />
+				<Question bind:editor bind:question {checked} bind:item={form.items[checked]} />
 			{/if}
 			<Button type={'submit'}>Actualizar formulario</Button>
 			<div>

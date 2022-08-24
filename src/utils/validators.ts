@@ -3,7 +3,6 @@ import type { Work, WorkBuild } from "$models/classroom/work.model";
 import type { Author } from "$models/library/author.model";
 import type { Book } from "$models/library/book.model";
 import { intToRoman } from "./format";
-import { deltaQuillToHtml } from "./quill";
 
 export function validateForm(form: FormType) {
     if (form.title.length === 0 || form.title.length > 100)
@@ -38,7 +37,7 @@ export function validateForm(form: FormType) {
 							iQ + 1
 						} del item ${intToRoman(i + 1)}`,
 					)
-				if (deltaQuillToHtml(question.question).length === 0)
+				if (question.question)
 					throw new Error(
 						`Debe escribir una pregunta en la pregunta ${iQ + 1} del item ${intToRoman(
 							i + 1,

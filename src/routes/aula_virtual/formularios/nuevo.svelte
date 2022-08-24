@@ -24,9 +24,8 @@
 	import type { ItemType } from '$models/classroom/item.model'
 	import { addToast } from '$stores/toasts'
 	import API from '$utils/APIModule'
-	import { deltaQuillToHtml } from '$utils/quill'
 	import { validateForm } from '$utils/validators'
-	import type Quill from 'quill'
+	import type { Editor } from '@tiptap/core'
 
 	let form = {
 		title: 'Nuevo formulario',
@@ -35,7 +34,7 @@
 	}
 	let checked: number = 0
 	let question: number = 0
-	let quill: Quill
+	let editor: Editor
 
 	function newItem() {
 		if (form.items.length !== 10) {
@@ -66,7 +65,7 @@
 	function deleteItem(index: number) {
 		question = 0
 		checked = 0
-		quill.setContents(form.items[checked].questions[question].question)
+		editor.commands.setContent(form.items[checked].questions[question].question)
 		form.items.splice(index, 1)
 		form.items = form.items
 	}
@@ -80,7 +79,7 @@
 					title: item.title,
 					questions: item.questions.map((question) => {
 						const questionData: any = {
-							question: deltaQuillToHtml(question.question),
+							question: question.question,
 							type: question.type,
 							answers: question.answers,
 						}
@@ -141,7 +140,7 @@
 					destroy={() => deleteItem(i)}
 					type={form.has_points}
 					bind:question
-					bind:quill
+					bind:editor
 					bind:item
 					bind:checked
 					number={i}
@@ -156,7 +155,7 @@
 			/>
 		</section>
 		{#if form.items.length > 0}
-			<Question bind:quill bind:question {checked} bind:item={form.items[checked]} />
+			<Question bind:editor bind:question {checked} bind:item={form.items[checked]} />
 		{/if}
 		<Button type={'submit'}>Subir formulario</Button>
 	</Form>

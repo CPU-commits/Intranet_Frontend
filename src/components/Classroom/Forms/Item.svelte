@@ -4,19 +4,19 @@
 	import Select from '$components/HTML/Select.svelte'
 	import type { ItemType } from '$models/classroom/item.model'
 	import { intToRoman } from '$utils/format'
-	import type Quill from 'quill'
+	import type { Editor } from '@tiptap/core'
 
 	export let item: ItemType
 	export let number: number
 	export let checked: number
 	export let type: string | boolean
 	export let destroy: (index: number) => void
-	export let quill: Quill
+	export let editor: Editor
 	export let question: number
 
 	function changeItem() {
 		question = 0
-		if (quill) quill.setContents(item.questions[question].question)
+		if (editor) editor.commands.setContent(item.questions[question].question)
 	}
 </script>
 

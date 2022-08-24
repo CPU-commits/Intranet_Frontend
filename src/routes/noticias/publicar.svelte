@@ -25,23 +25,21 @@
 
 	import Form from '$components/HTML/Form.svelte'
 
-	import RichInput from '$components/HTML/RichInput.svelte'
 	import { variables } from '$lib/variables'
 	import { addToast } from '$stores/toasts'
-	import type Quill from 'quill'
 	import API from '$utils/APIModule'
 	import { goto } from '$app/navigation'
-	import { deltaToHtml } from '$utils/quill'
+	import Rich from '$components/HTML/Rich.svelte'
+	import type { Editor } from '@tiptap/core'
 
 	let news = {
 		title: '',
 		headline: '',
 		body: '',
-		img: 'gsdfg',
 	}
 	let src = '/img/news.svg'
 	let fileInput: HTMLInputElement
-	let quill: Quill
+	let editor: Editor
 
 	function onFileSelected(e) {
 		let image = e.target.files[0]
@@ -82,7 +80,7 @@
 
 	async function publishNews() {
 		try {
-			news.body = deltaToHtml(quill)
+			news.body = editor.getHTML()
 			const validators = validatorsNews()
 			if (!validators.success) throw new Error(validators.message)
 			await API.fetchData(
@@ -120,7 +118,7 @@
 				accept=".jpg, .jpeg, .png"
 				type="file"
 			/>
-			<RichInput bind:value={quill} placeholder={'Cuerpo...'} />
+			<Rich bind:editor />
 			<button type="submit">Publicar noticia </button>
 		</Form>
 	</div>

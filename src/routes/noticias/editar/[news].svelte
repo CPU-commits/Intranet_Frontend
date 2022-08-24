@@ -31,16 +31,16 @@
 	import Form from '$components/HTML/Form.svelte'
 	import type Quill from 'quill'
 	import { addToast } from '$stores/toasts'
-	import RichInput from '$components/HTML/RichInput.svelte'
-	import { deltaToHtml } from '$utils/quill'
 	import { goto } from '$app/navigation'
+	import type { Editor } from '@tiptap/core'
+	import Rich from '$components/HTML/Rich.svelte'
 
 	export let news: News
 	export let token: string
 	// News
 	let newsCopy: News = JSON.parse(JSON.stringify(news))
 	let fileInput: HTMLInputElement
-	let quill: Quill
+	let editor: Editor
 
 	function onFileSelected(e) {
 		let image = e.target.files[0]
@@ -79,7 +79,7 @@
 
 	async function updateNews() {
 		try {
-			newsCopy.body = deltaToHtml(quill)
+			newsCopy.body = editor.getHTML()
 			const validators = validatorsNews()
 			if (!validators.success) throw new Error(validators.message)
 			await API.fetchData(
@@ -122,7 +122,7 @@
 				accept=".jpg, .jpeg, .png"
 				type="file"
 			/>
-			<RichInput body={news.body} bind:value={quill} placeholder={'Cuerpo...'} />
+			<Rich body={news.body} bind:editor placeholder={'Cuerpo...'} />
 			<button type="submit">Editar noticia </button>
 		</Form>
 	</div>

@@ -1,10 +1,8 @@
 <script lang="ts">
-	import RichInput from '$components/HTML/RichInput.svelte'
+	import Rich from '$components/HTML/Rich.svelte'
 
 	import type { News } from '$models/news.model'
 	export let news: News
-
-	let quill: any
 </script>
 
 <section class="News">
@@ -12,7 +10,7 @@
 		<h1>{news.title}</h1>
 		<p>{news.headline}</p>
 		<img src={news.image.url} alt={news.title} />
-		<RichInput value={quill} readOnly={true} body={news.body} />
+		<Rich haveBackground={false} readOnly={true} body={news.body} />
 	</div>
 </section>
 
@@ -27,6 +25,7 @@
 
 	.News__contain {
 		max-width: 650px;
+		width: 100%;
 	}
 
 	h1,

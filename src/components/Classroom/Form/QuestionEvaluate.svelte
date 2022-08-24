@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { ItemQuestion } from '$models/classroom/form.model'
-	import RichInput from '$components/HTML/RichInput.svelte'
 	import ButtonIcon from '$components/HTML/ButtonIcon.svelte'
 	import { intToChar } from '$utils/format'
 	import { addToast } from '$stores/toasts'
@@ -8,6 +7,7 @@
 	import { variables } from '$lib/variables'
 	import type { AnswerWEvaluate } from '$models/classroom/answer.model'
 	import Input from '$components/HTML/Input.svelte'
+	import Rich from '$components/HTML/Rich.svelte'
 
 	export let question: ItemQuestion
 	export let number: number
@@ -68,7 +68,7 @@
 <article class="Question" id="pregunta{number}">
 	<header class="Question__header">
 		<h4>{number})</h4>
-		<RichInput body={question.question} readOnly={true} />
+		<Rich body={question.question} readOnly={true} haveBackground={false} />
 	</header>
 	{#if !question.type.includes('alternatives')}
 		<pre>R\: {question.answer !== '' ? question.answer : 'Sin respuesta'}</pre>

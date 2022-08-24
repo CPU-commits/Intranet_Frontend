@@ -1,20 +1,21 @@
 <script lang="ts">
 	import ButtonIcon from '$components/HTML/ButtonIcon.svelte'
 	import Input from '$components/HTML/Input.svelte'
-	import RichInput from '$components/HTML/RichInput.svelte'
+	import Rich from '$components/HTML/Rich.svelte'
 	import Select from '$components/HTML/Select.svelte'
 	import type { ItemType } from '$models/classroom/item.model'
 	import { addToast } from '$stores/toasts'
 	import { intToRoman } from '$utils/format'
-	import type Quill from 'quill'
+	import type { Editor } from '@tiptap/core'
 
 	export let checked: number
 	export let item: ItemType
 	export let question: number
-	export let quill: Quill
+	export let editor: Editor
 
 	function setInitQuestion() {
-		if (item.questions[question]?.question) quill.setContents(item.questions[question].question)
+		if (editor && item.questions[question]?.question)
+			editor.commands.setContent(item.questions[question].question)
 	}
 
 	function newQuestion() {
@@ -47,7 +48,7 @@
 			item.questions.splice(question, 1)
 			if (length === question + 1) question--
 			item.questions = item.questions
-			quill.setContents(item.questions[question].question)
+			editor.commands.setContent(item.questions[question].question)
 		} else {
 			addToast({
 				message: 'Debe existir mín. 1 pregunta',
@@ -62,9 +63,9 @@
 	}
 
 	function changeQuestion(index: number) {
-		item.questions[question].question = quill.getContents()
+		item.questions[question].question = editor.getHTML()
 		question = index
-		quill.setContents(item.questions[question].question)
+		editor.commands.setContent(item.questions[question].question)
 	}
 </script>
 
@@ -87,13 +88,14 @@
 		<option value="written">Respuesta escrita</option>
 	</Select>
 	<br />
-	<RichInput
+	<Rich
 		focusDown={() => {
-			item.questions[question].question = quill.getContents()
+			item.questions[question].question = editor.getHTML()
 		}}
 		beforeMount={setInitQuestion}
 		placeholder={'Pregunta'}
-		bind:value={quill}
+		haveBackground={false}
+		bind:editor
 	/>
 	{#if item.points_type === 'custom' && item.questions[question].type !== 'alternatives'}
 		<div class="Form__questions--points">
