@@ -1,8 +1,7 @@
 import type { ItemTypeEnum, QuestionTypeEnum } from "./form.model"
 
 export type ItemQuestionType = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    question: any
+    question: string
     type: keyof typeof QuestionTypeEnum
     answers: Array<string>
     points?: string
