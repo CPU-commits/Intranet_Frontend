@@ -49,6 +49,10 @@ export function formatDateUTC(date: string | Date) {
     return moment(date).utcOffset(0, true).locale('es').utc().format('YYYY-MM-DD HH:mm')
 }
 
+export function formateDateInput(date: string | Date) {
+    return moment(date).utc().format('YYYY-MM-DD')
+}
+
 export function intToChar(int: number) {
     const code = 'a'.charCodeAt(0)
     return String.fromCharCode(code + int)
