@@ -5,7 +5,7 @@
 	export let placeholder = ''
 	export let keyup = () => {}
 
-	function typeAction(node) {
+	function typeAction(node: HTMLInputElement) {
 		node.type = type
 	}
 </script>

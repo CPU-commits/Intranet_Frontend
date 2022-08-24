@@ -1,18 +1,12 @@
 <script lang="ts">
-	import Cloud from '$components/Cloud.svelte'
 	import Button from '$components/HTML/Button.svelte'
-	import ButtonIcon from '$components/HTML/ButtonIcon.svelte'
-	import Form from '$components/HTML/Form.svelte'
-	import Input from '$components/HTML/Input.svelte'
 
 	import TextArea from '$components/HTML/TextArea.svelte'
-	import Modal from '$components/Modal.svelte'
 	import { variables } from '$lib/variables'
 	import type { AttachedType, Publication } from '$models/classroom/publication.model'
 	import type { UserFiles } from '$models/users/files.model'
 	import { addToast } from '$stores/toasts'
 	import API from '$utils/APIModule'
-	import { isValidHttpUrl } from '$utils/format'
 	import Attached from './Attached.svelte'
 	import File from './File.svelte'
 	import Link from './Link.svelte'

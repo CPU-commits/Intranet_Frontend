@@ -43,7 +43,7 @@
 </script>
 
 <article bind:this={workNode} class="Work">
-	{#if new Date().getTime() > new Date(work.date_limit).getTime()}
+	{#if new Date().getTime() < new Date(work.date_limit).getTime()}
 		<aside class="Topleft">
 			{#if user_type === UserTypes.TEACHER}
 				<ButtonIcon

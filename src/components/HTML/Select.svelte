@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let value: any
 	export let id: string
-	export let change = (...any: any): any => {}
+	export let change: (...any: any) => any = null
 	export let dataId = ''
 </script>
 

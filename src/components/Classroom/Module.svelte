@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ClassroomModules } from '$models/classroom/modules'
 	import { UserTypes } from '$models/users/user_type.model'
-	import { formatDate, formatMiniDate } from '$utils/format'
+	import { formatMiniDate } from '$utils/format'
 
 	export let moduleData: ClassroomModules
 	export let user_type: string
@@ -47,7 +47,7 @@
 		{/if}
 	</div>
 	<footer>
-		<i class="fa-solid fa-chart-line" />
+		<!--<i class="fa-solid fa-chart-line" />-->
 	</footer>
 </article>
 
