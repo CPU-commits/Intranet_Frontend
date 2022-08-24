@@ -18,7 +18,6 @@
 	import Button from '$components/HTML/Button.svelte'
 	import { addToast } from '$stores/toasts'
 	import API from '$utils/APIModule'
-	import { goto } from '$app/navigation'
 
 	// User
 	let userForm = {
