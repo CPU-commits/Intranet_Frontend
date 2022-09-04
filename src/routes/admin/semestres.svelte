@@ -16,6 +16,7 @@
 	import Panel from '$components/Admin/Panel.svelte'
 	import Button from '$components/HTML/Button.svelte'
 	import ButtonIcon from '$components/HTML/ButtonIcon.svelte'
+	import Checkbox from '$components/HTML/Checkbox.svelte'
 	import Form from '$components/HTML/Form.svelte'
 	import Input from '$components/HTML/Input.svelte'
 	import Select from '$components/HTML/Select.svelte'
@@ -23,20 +24,27 @@
 	import Modal from '$components/Modal.svelte'
 	import SpinnerGet from '$components/SpinnerGet.svelte'
 	import { variables } from '$lib/variables'
+	import type { Course } from '$models/admin/courses.model'
 	import type { Semester } from '$models/admin/semester.model'
+	import type { Student } from '$models/admin/student.model'
 	import { addToast } from '$stores/toasts'
 	import API from '$utils/APIModule'
 	import { onMount } from 'svelte'
 	// Modal
 	let modalSemester = false
 	let modalEdit = false
+	let modalFinish = false
 	const toggleSemester = () => (modalSemester = !modalSemester)
 	const toggleEdit = () => (modalEdit = !modalEdit)
+	const toggleFinish = () => (modalFinish = !modalFinish)
 	// Data
 	let semesters: Semester[]
 	let positionSemester: number
 	let semesterData: Semester
+	let courses: Course[]
+	let students: { student: Student; repeat: boolean }[][]
 	// Form
+	let currentSemester: Semester
 	let semesterForm = {
 		semester: '',
 		year: '',
@@ -50,6 +58,7 @@
 				token,
 			)
 			semesters = semestersData.body.semesters
+			getCurrentSemester()
 		} catch (err) {
 			semesters = []
 			addToast({
@@ -143,6 +152,89 @@
 			})
 		}
 	}
+
+	function getCurrentSemester() {
+		const indexSemester = semesters.findIndex((s) => s.status === 2)
+		currentSemester = semesters[indexSemester]
+	}
+
+	async function finishSemester() {
+		try {
+			const studentsRepeat = students
+				.flat()
+				.filter((student) => {
+					if (student.repeat) return student
+				})
+				.map((student) => {
+					return student.student._id
+				})
+			await API.fetchData(
+				'put',
+				`${variables.API}/api/semesters/finish_semester`,
+				{ students_repeat: studentsRepeat },
+				true,
+				undefined,
+				token,
+			)
+			addToast({
+				message: 'Se ha finalizado el semestre exitosamente',
+				type: 'success',
+			})
+		} catch (err) {
+			addToast({
+				message: err.message,
+				type: 'error',
+			})
+		}
+	}
+
+	async function getCourses() {
+		try {
+			const dataFetch = await API.fetchGetData(
+				`${variables.API}/api/course/get_courses`,
+				true,
+				token,
+			)
+			courses = dataFetch.body.courses
+			students = new Array(courses.length)
+		} catch (err) {
+			addToast({
+				message: err.message,
+				type: 'error',
+			})
+		}
+	}
+
+	async function getStudentsFromCourse(idCourse: string, index: number) {
+		try {
+			if (!students[index]) {
+				const dataFetch = await API.fetchGetData(
+					`${variables.API}/api/students/get_students_course/${idCourse}`,
+					true,
+					token,
+				)
+				students[index] = dataFetch.body.map((student: Student) => {
+					return {
+						student,
+						repeat: false,
+					}
+				})
+			}
+		} catch (err) {
+			addToast({
+				message: err.message,
+				type: 'error',
+			})
+		}
+	}
+
+	function countAfterCourses(index: number) {
+		let counter = 0
+		for (let i = 0; i < index; i++) {
+			counter += courses[i].sections.length
+		}
+		return counter
+	}
 </script>
 
 <Panel>
@@ -151,6 +243,14 @@
 			clickFunction={toggleSemester}
 			title={'Agregar semestre'}
 			classItem={'fa-solid fa-plus'}
+		/>
+		<ButtonIcon
+			clickFunction={() => {
+				toggleFinish()
+				getCourses()
+			}}
+			title={'Finalizar semestre vigente'}
+			classItem={'fa-solid fa-flag'}
 		/>
 	</Icons>
 	<h2>Semestres</h2>
@@ -174,7 +274,7 @@
 								positionSemester = i
 								initSemester()
 							}}
-							type="button"><i class="fa-solid fa-flag" /></Button
+							type="button"><i class="fa-solid fa-rocket" /></Button
 						>
 					</td>
 					<td>
@@ -235,8 +335,71 @@
 	</Modal>
 {/if}
 
+{#if modalFinish}
+	<Modal onClose={toggleFinish}>
+		<h2 slot="title">Finalizar semestre</h2>
+		<Form form={finishSemester}>
+			{#if currentSemester.semester === 2}
+				<h3><i class="fa-solid fa-repeat" /> Alumnos que repiten curso</h3>
+				{#if courses}
+					{#each courses as course, i}
+						{#each course.sections as section, j}
+							<h4>
+								{course.course}
+								{section.section}
+								<div>
+									<ButtonIcon
+										clickFunction={() =>
+											getStudentsFromCourse(
+												section._id,
+												countAfterCourses(i) + j,
+											)}
+										classItem={'fa-solid fa-caret-down'}
+									/>
+								</div>
+							</h4>
+							<section>
+								{#if students[countAfterCourses(i) + j]}
+									<Table header={['Estudiante', 'RUT', 'Repite']}>
+										{#each students[countAfterCourses(i) + j] as student}
+											<tr>
+												<td>
+													{student.student.name}
+													{student.student.first_lastname}
+													{student.student.second_lastname}
+												</td>
+												<td>{student.student.rut}</td>
+												<td>
+													<Checkbox
+														bind:checked={student.repeat}
+														id={student.student._id}
+													/>
+												</td>
+											</tr>
+										{/each}
+									</Table>
+								{/if}
+							</section>
+						{/each}
+					{/each}
+				{:else}
+					<SpinnerGet />
+				{/if}
+			{/if}
+			<span>* Tendr&aacute; hasta tres d&iacute;as para cancelar esta acci&oacute;n</span>
+			<Button type={'submit'}>Finalizar semestre</Button>
+		</Form>
+	</Modal>
+{/if}
+
 <style>
 	td i {
 		color: white;
+	}
+
+	h4 {
+		display: flex;
+		align-items: center;
+		gap: 5px;
 	}
 </style>

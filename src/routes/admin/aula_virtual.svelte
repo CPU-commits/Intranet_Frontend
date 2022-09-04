@@ -15,6 +15,7 @@
 	import Panel from '$components/Admin/Panel.svelte'
 	import Button from '$components/HTML/Button.svelte'
 	import ButtonIcon from '$components/HTML/ButtonIcon.svelte'
+	import Checkbox from '$components/HTML/Checkbox.svelte'
 	import Form from '$components/HTML/Form.svelte'
 	import Input from '$components/HTML/Input.svelte'
 	import Table from '$components/HTML/Table.svelte'
@@ -33,9 +34,11 @@
 	let modalGrade = false
 	let modalGrades = false
 	let modalConfg = false
+	let modalDirectives = false
 	const toggleGrade = () => (modalGrade = !modalGrade)
 	const toggleGrades = () => (modalGrades = !modalGrades)
 	const toggleConfg = () => (modalConfg = !modalConfg)
+	const toggleDirectives = () => (modalDirectives = !modalDirectives)
 	// Data
 	let gradeConfig = {
 		min: '',
@@ -46,6 +49,20 @@
 	let moduleSelected: ClassroomModules
 	let grades: Array<StudentGrade>
 	let gradePrograms: Array<GradeProgram>
+	// Directives
+	let directives = {
+		min_grades: {
+			actived: false,
+			min_grade: '',
+		},
+		continuous: false,
+		all_grades: false,
+	}
+	let directivesModules: Array<{
+		module: string
+		status: boolean
+		messages: Array<string>
+	}>
 
 	onMount(async () => {
 		try {
@@ -115,6 +132,77 @@
 			})
 		}
 	}
+
+	async function getDirectivesModule() {
+		try {
+			const dataFetch = await API.fetchGetData(
+				`${variables.API}/api/classroom/directives/get_directive/${moduleSelected._id}`,
+				true,
+				token,
+			)
+			const directivesData = dataFetch.body.directives
+			if (directivesData)
+				directives = {
+					...directives,
+					...directivesData,
+				}
+		} catch (err) {
+			addToast({
+				message: err.message,
+				type: 'error',
+			})
+		}
+	}
+
+	async function addDirective() {
+		try {
+			await API.fetchData(
+				'post',
+				`${variables.API}/api/classroom/directives/add_directive/${moduleSelected._id}`,
+				directives,
+				true,
+				undefined,
+				token,
+			)
+			addToast({
+				message: 'Se han actualizado las directivas exitosamente',
+				type: 'success',
+			})
+			modalConfg = false
+		} catch (err) {
+			addToast({
+				message: err.message,
+				type: 'error',
+			})
+		}
+	}
+
+	async function getDirectives() {
+		try {
+			const dataFetch = await API.fetchGetData(
+				`${variables.API}/api/classroom/directives/get_directives_status`,
+				true,
+				token,
+			)
+			directivesModules = dataFetch.body.directives.map((directive) => {
+				return {
+					...directive,
+					messages: directive?.messages?.map((message) => {
+						if (message === 'min_grades') return 'Cantidad mín. calificaciones'
+						if (message === 'all_grades')
+							return 'Todos los alumnos con todas las calificaciones programadas'
+						if (message === 'continuous') return 'Calificaciones programadas continuas'
+					}),
+				}
+			})
+			toggleDirectives()
+		} catch (err) {
+			addToast({
+				message: err.message,
+				type: 'error',
+			})
+		}
+	}
 </script>
 
 <Panel>
@@ -123,6 +211,11 @@
 			title={'Calificaciones'}
 			classItem={'fa-solid fa-feather-pointed'}
 			clickFunction={toggleGrade}
+		/>
+		<ButtonIcon
+			title={'Consultar directivas en módulos'}
+			classItem={'fa-solid fa-circle-nodes'}
+			clickFunction={getDirectives}
 		/>
 	</Icons>
 	<h2>Aula virtual</h2>
@@ -149,7 +242,14 @@
 						</Button>
 					</td>
 					<td>
-						<Button type={'button'} click={toggleConfg}>
+						<Button
+							type={'button'}
+							click={() => {
+								toggleConfg()
+								moduleSelected = _module
+								getDirectivesModule()
+							}}
+						>
 							<i class="fa-solid fa-gear" />
 						</Button>
 					</td>
@@ -235,14 +335,42 @@
 {#if modalConfg}
 	<Modal onClose={toggleConfg}>
 		<h2 slot="title">Configuraci&oacute;n de m&oacute;dulo</h2>
-		<Form form={() => {}}>
+		<Form form={addDirective}>
+			<h3><i class="fa-solid fa-sign-hanging" /> Directivas</h3>
+			<label for="min">Cantidad m&iacute;nima de calificaciones</label>
+			<Checkbox bind:checked={directives.min_grades.actived} id={'min_actived'} />
+			{#if directives.min_grades.actived}
+				<Input bind:value={directives.min_grades.min_grade} type={'number'} id={'min'} />
+			{/if}
+			<label for="continuous">Calificaciones programadas continuas entre s&iacute;</label>
+			<Checkbox bind:checked={directives.continuous} id={'continuous'} />
+			<label for="all_grades">
+				Todos los alumnos con todas las calificaciones programadas
+			</label>
+			<Checkbox bind:checked={directives.all_grades} id={'all_grades'} />
 			<Button type={'submit'}>Actualizar m&oacute;dulo</Button>
 		</Form>
 	</Modal>
 {/if}
 
+{#if modalDirectives}
+	<Modal onClose={toggleDirectives}>
+		<h2 slot="title">Directivas de m&oacute;dulos</h2>
+		<Table header={['Módulo', 'Estado directivas', 'Directivas por completar']}>
+			{#each directivesModules as directive}
+				<tr>
+					<td>{directive.module}</td>
+					<td>{directive.status ? 'Completo' : 'Incompleto'}</td>
+					<td>{directive.status ? 'No aplica' : directive.messages.join(' | ')}</td>
+				</tr>
+			{/each}
+		</Table>
+	</Modal>
+{/if}
+
 <style>
-	i {
+	.fa-highlighter,
+	.fa-gear {
 		color: white;
 	}
 </style>

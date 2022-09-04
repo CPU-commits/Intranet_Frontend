@@ -34,11 +34,17 @@
 	import { onMount } from 'svelte'
 	// Modals
 	let modal = false
+	let modalSections = false
 	const toggleModal = () => (modal = !modal)
+	const toggleModalSections = () => (modalSections = !modalSections)
 	// Data
 	let teachers: Teacher[]
 	let sections: Section[]
 	let course: Course
+	let nextCourse: Course
+	let nextSections: Section[]
+	// Selected
+	let sectionSelected: Section
 	// Forms
 	let section = ''
 	let files: FileList
@@ -178,6 +184,51 @@
 			})
 		}
 	}
+
+	async function getSectionsNextLevel() {
+		try {
+			const dataFetch = await API.fetchGetData(
+				`${variables.API}/api/course/get_sections_next_level/${course._id}`,
+				false,
+				token,
+			)
+			nextCourse = dataFetch.body.course
+			nextSections = dataFetch.body.sections
+		} catch (err) {
+			nextSections = []
+			addToast({
+				message: err.message,
+				type: 'error',
+			})
+		}
+	}
+
+	async function selectNextSection(sectionData: Section) {
+		try {
+			await API.fetchData(
+				'put',
+				`${variables.API}/api/course/select_next_section/${sectionSelected._id}/${sectionData._id}`,
+				undefined,
+				true,
+				undefined,
+				token,
+			)
+			sections = sections.map((section) => {
+				if (section._id === sectionSelected._id)
+					return {
+						...section,
+						next_section: sectionData,
+					}
+				return section
+			})
+			modalSections = false
+		} catch (err) {
+			addToast({
+				message: err.message,
+				type: 'error',
+			})
+		}
+	}
 </script>
 
 <Panel>
@@ -189,11 +240,15 @@
 		/>
 	</Icons>
 	<h2>
-		Secciones {#if course}{course.course}{/if}
+		Secciones
+		{#if course}
+			{course.course}
+			{course.isFinal ? '(Curso final)' : ''}
+		{/if}
 	</h2>
 	<br />
 	{#if sections}
-		<Table header={['Sección', 'Imágen', 'Profesor jefe', '']}>
+		<Table header={['Sección', 'Imágen', 'Sección sub-siguiente', 'Profesor jefe', '']}>
 			{#each sections as section, i}
 				<tr>
 					<td>{section.section}</td>
@@ -208,6 +263,27 @@
 							src={section.file.url}
 							alt={section.section}
 						/>
+					</td>
+					<td>
+						{#if !course.isFinal}
+							<div class="Next">
+								{section?.next_section
+									? `${section.next_section.section}`
+									: 'Sin asignar'}
+								<div>
+									<ButtonIcon
+										clickFunction={() => {
+											sectionSelected = section
+											getSectionsNextLevel()
+											toggleModalSections()
+										}}
+										classItem={'fa-solid fa-arrows-turn-to-dots'}
+									/>
+								</div>
+							</div>
+						{:else}
+							No aplica
+						{/if}
 					</td>
 					<td>
 						<Select
@@ -266,6 +342,34 @@
 	</Modal>
 {/if}
 
+{#if modalSections}
+	<Modal onClose={toggleModalSections}>
+		<h2 slot="title">Secciones sub-siguientes</h2>
+		{#if nextSections}
+			<h3>Curso {nextCourse.course} ({nextCourse.level}°)</h3>
+			<br />
+			<Table header={['Sección', 'Seleccionar como siguiente']}>
+				{#each nextSections as section}
+					<tr>
+						<td>
+							{section.section}
+						</td>
+						<td>
+							<ButtonIcon
+								selected={sectionSelected?.next_section?._id === section._id}
+								clickFunction={() => selectNextSection(section)}
+								classItem={'fa-solid fa-circle-check'}
+							/>
+						</td>
+					</tr>
+				{/each}
+			</Table>
+		{:else}
+			<SpinnerGet />
+		{/if}
+	</Modal>
+{/if}
+
 <style>
 	img {
 		width: 100px;
@@ -277,5 +381,11 @@
 
 	input {
 		display: none;
+	}
+
+	.Next {
+		display: flex;
+		gap: 15px;
+		justify-content: center;
 	}
 </style>
