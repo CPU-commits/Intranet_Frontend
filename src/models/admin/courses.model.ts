@@ -7,6 +7,7 @@ export interface Section {
     section: string
     course: Course
     header_teacher: User | string
+    next_section?: Section
     _id: string
     file: UserFiles
 }
