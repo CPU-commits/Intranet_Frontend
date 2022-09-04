@@ -38,28 +38,32 @@
 	{#if grades}
 		<Table header={['Calificación', 'N°', 'Calificador', 'Fecha']}>
 			{#each grades as grade, i}
-				{#if !grade.is_acumulative}
-					<tr>
-						<td>{grade.grade}</td>
-						<td>{gradePrograms[i].number}</td>
-						<td>{grade.evaluator.name} {grade.evaluator.first_lastname}</td>
-						<td>{formatDate(grade.date)}</td>
-					</tr>
-				{:else}
-					{#each grade.acumulative as acumulative, j}
+				{#if grade}
+					{#if !grade.is_acumulative}
 						<tr>
-							<td>{acumulative.grade}</td>
-							<td
-								>{gradePrograms[i].number}
-								(Acu: {gradePrograms[i].acumulative[j].number})</td
-							>
-							<td
-								>{acumulative.evaluator.name}
-								{acumulative.evaluator.first_lastname}</td
-							>
-							<td>{formatDate(acumulative.date)}</td>
+							<td>{grade.grade}</td>
+							<td>{gradePrograms[i].number}</td>
+							<td>{grade.evaluator.name} {grade.evaluator.first_lastname}</td>
+							<td>{formatDate(grade.date)}</td>
 						</tr>
-					{/each}
+					{:else}
+						{#each grade.acumulative as acumulative, j}
+							{#if acumulative}
+								<tr>
+									<td>{acumulative.grade}</td>
+									<td
+										>{gradePrograms[i].number}
+										(Acu: {gradePrograms[i].acumulative[j].number})</td
+									>
+									<td
+										>{acumulative.evaluator.name}
+										{acumulative.evaluator.first_lastname}</td
+									>
+									<td>{formatDate(acumulative.date)}</td>
+								</tr>
+							{/if}
+						{/each}
+					{/if}
 				{/if}
 			{:else}
 				<span>No hay calificaciones...</span>
