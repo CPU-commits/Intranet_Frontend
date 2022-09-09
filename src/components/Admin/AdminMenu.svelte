@@ -65,13 +65,13 @@
 			</li>
 		</a>
 		{#if user_type !== UserTypes.LIBRARIAN}
-			<a sveltekit:prefetch href="/admin/">
-				<li>
-					<i class="fa-solid fa-bezier-curve" /> Mapa
+			<a sveltekit:prefetch href="/admin/archivado">
+				<li class:Selected={url.startsWith('/admin/archivado')}>
+					<i class="fa-solid fa-box-archive" /> Archivado
 				</li>
 			</a>
 			<a sveltekit:prefetch href="/admin/historico">
-				<li class:Selected={url === '/admin/historico'}>
+				<li class:Selected={url.startsWith('/admin/historico')}>
 					<i class="fa-solid fa-clock-rotate-left" /> Historico
 				</li>
 			</a>
