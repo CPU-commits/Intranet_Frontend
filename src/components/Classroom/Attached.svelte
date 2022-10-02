@@ -1,16 +1,21 @@
 <script lang="ts">
+	// Exports
 	export let token: string
 	export let linksAttached: Array<typeof linkObj>
 	export let filesAttached: Array<UserFiles>
 
+	// Types
+	import type { UserFiles } from '$models/users/files.model'
+	// Stores
+	import { addToast } from '$stores/toasts'
+	// Components
 	import Cloud from '$components/Cloud.svelte'
 	import Button from '$components/HTML/Button.svelte'
 	import ButtonIcon from '$components/HTML/ButtonIcon.svelte'
 	import Form from '$components/HTML/Form.svelte'
 	import Input from '$components/HTML/Input.svelte'
 	import Modal from '$components/Modal.svelte'
-	import type { UserFiles } from '$models/users/files.model'
-	import { addToast } from '$stores/toasts'
+	// Utils
 	import { isValidHttpUrl } from '$utils/format'
 
 	// Modal
