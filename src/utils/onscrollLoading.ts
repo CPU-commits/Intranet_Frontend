@@ -1,8 +1,4 @@
-type ToDo = {
-    (n: number): Promise<number>,
-}
-
-export default async function(total: number, f: ToDo, max = 30, element?: HTMLElement) {
+export default async function(total: number, fx: (n: number) => Promise<number>, max = 30, element?: HTMLElement) {
     // Init
     let count = max
     let running = false
@@ -23,7 +19,7 @@ export default async function(total: number, f: ToDo, max = 30, element?: HTMLEl
             }
             if(myPosition / elementScroll.scrollHeight >= 0.6 && !running && count < total){
                 running = true
-                count = await f(count)
+                count = await fx(count)
                 running = false
             }
         }
