@@ -201,22 +201,26 @@
 		}
 	}
 
-	async function selectNextSection(sectionData: Section) {
+	async function selectNextSection(sectionData: Section = null) {
 		try {
-			await API.fetchData(
-				'put',
-				`${variables.API}/api/course/select_next_section/${sectionSelected._id}/${sectionData._id}`,
-				undefined,
-				true,
-				undefined,
-				token,
-			)
+			let route = `${variables.API}/api/course/select_next_section/${sectionSelected._id}`
+			if (sectionData) route += `?idNextSection=${sectionData._id}`
+			await API.fetchData('put', route, undefined, true, undefined, token)
+
 			sections = sections.map((section) => {
-				if (section._id === sectionSelected._id)
+				if (section._id === sectionSelected._id) {
+					if (sectionData)
+						return {
+							...section,
+							next_section: sectionData,
+							is_next_section_variable: false,
+						}
 					return {
 						...section,
-						next_section: sectionData,
+						next_section: null,
+						is_next_section_variable: true,
 					}
+				}
 				return section
 			})
 			modalSections = false
@@ -265,7 +269,9 @@
 					<td>
 						{#if !course.isFinal}
 							<div class="Next">
-								{section?.next_section
+								{section.is_next_section_variable
+									? 'Variable'
+									: section?.next_section
 									? `${section.next_section.section}`
 									: 'Sin asignar'}
 								<div>
@@ -361,6 +367,16 @@
 						</td>
 					</tr>
 				{/each}
+				<tr>
+					<td>Variable</td>
+					<td>
+						<ButtonIcon
+							selected={sectionSelected.is_next_section_variable}
+							clickFunction={() => selectNextSection()}
+							classItem={'fa-solid fa-circle-check'}
+						/>
+					</td>
+				</tr>
 			</Table>
 		{:else}
 			<SpinnerGet />

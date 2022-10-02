@@ -10,7 +10,7 @@
 	import AdminMenu from '$components/Admin/AdminMenu.svelte'
 
 	// Init variables
-	let url = $page.url.pathname
+	$: url = $page.url.pathname
 	let user_type = data.user.user_type
 </script>
 

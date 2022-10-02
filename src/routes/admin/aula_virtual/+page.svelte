@@ -71,6 +71,7 @@
 			gradeConfig = dataFetch[0].body.gradeConfig
 			modules = dataFetch[1].body.modules
 		} catch (err) {
+			modules = []
 			addToast({
 				message: err.message,
 				type: 'error',
@@ -80,20 +81,13 @@
 
 	async function getModuleGrades() {
 		try {
-			const dataFetch = await Promise.all([
-				API.fetchGetData(
-					`${variables.API_CLASSROOM_READ}/api/classroom/grades/get_students_grades/${moduleSelected._id}`,
-					true,
-					token,
-				),
-				API.fetchGetData(
-					`${variables.API_CLASSROOM_READ}/api/classroom/grades/get_grade_programs/${moduleSelected._id}`,
-					true,
-					token,
-				),
-			])
-			grades = dataFetch[0].body.students
-			gradePrograms = dataFetch[1].body.programs
+			const dataFetch = await API.fetchGetData(
+				`/API/admin/get_module_grades?module=${moduleSelected._id}`,
+				true,
+				token,
+			)
+			grades = dataFetch.body.grades
+			gradePrograms = dataFetch.body.gradePrograms
 		} catch (err) {
 			grades = []
 			gradePrograms = []
