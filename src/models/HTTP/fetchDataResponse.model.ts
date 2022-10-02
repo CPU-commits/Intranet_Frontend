@@ -1,7 +1,7 @@
-export interface FetchResponse {
+export interface FetchResponse<T> {
     success: boolean
     message?: string
     statusCode?: number
-    request?
-    body?
+    request?: Request
+    body?: T
 }
