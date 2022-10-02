@@ -1,15 +1,18 @@
-import { variables } from '$lib/variables'
+import { env } from '$env/dynamic/private'
 import { createClient } from 'redis'
 
 async function createClientRedis() {
     try {
-        const { user, password, host, port } = variables.redis
+        const user = env.REDIS_USER
+        const password = env.REDIS_PASSWORD
+        const host = env.REDIS_HOST
+        const port = env.REDIS_PORT
         const client = createClient({
             url: `redis://${user}:${password}@${host}:${port}`
         })
         await client.connect()
         return client
-    }catch(err){
+    } catch(err) {
         return err
     }
 }
