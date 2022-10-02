@@ -30,7 +30,7 @@
 				type: 'application/pdf',
 			})
 			const url = window.URL.createObjectURL(blob)
-			downloadFileURL(url, `uwu.pdf`)
+			downloadFileURL(url, `Calificaciones.pdf`)
 		} catch (err) {
 			addToast({
 				message: err.message,
@@ -41,13 +41,13 @@
 </script>
 
 <nav class="Classroom__menu">
-	<a class:Selected={pathname === base} sveltekit:prefetch href="/aula_virtual">
+	<a class:Selected={pathname === base} data-sveltekit-prefetch href="/aula_virtual">
 		<i class="fa-solid fa-chalkboard" />
 	</a>
 	{#if user_type === UserTypes.STUDENT || user_type === UserTypes.STUDENT_DIRECTIVE}
 		<a
 			class:Selected={pathname === `${base}/tareas`}
-			sveltekit:prefetch
+			data-sveltekit-prefetch
 			href="/aula_virtual/tareas"
 		>
 			<i class="fa-solid fa-thumbtack" />
@@ -59,7 +59,7 @@
 		/>
 		<a
 			class:Selected={pathname === `${base}/historial`}
-			sveltekit:prefetch
+			data-sveltekit-prefetch
 			href="/aula_virtual/historial"
 		>
 			<i class="fa-solid fa-clock-rotate-left" />
@@ -67,7 +67,7 @@
 	{:else if user_type === UserTypes.TEACHER}
 		<a
 			class:Selected={pathname === `${base}/formularios`}
-			sveltekit:prefetch
+			data-sveltekit-prefetch
 			href="/aula_virtual/formularios"
 		>
 			<i class="fa-solid fa-clipboard" />
@@ -83,6 +83,13 @@
 		justify-content: space-around;
 		box-sizing: border-box;
 		border: 2px solid var(--color-main);
+	}
+
+	a {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		text-decoration: none;
 	}
 
 	a:hover i {
