@@ -10,6 +10,7 @@
 	// Components
 	import ReadNews from '$components/News/ReadNews.svelte'
 
+	// Init variables
 	let news = data.news
 </script>
 

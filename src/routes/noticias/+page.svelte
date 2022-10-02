@@ -71,8 +71,8 @@
 <section class="News">
 	{#if user_type === UserTypes.STUDENT || user_type === UserTypes.STUDENT_DIRECTIVE}
 		<ul class="News__type">
-			<li><a class="News__type--use" sveltekit:prefetch href="/noticias">General</a></li>
-			<li><a sveltekit:prefetch href="/noticias/estudiantes">Estudiantes</a></li>
+			<li><a class="News__type--use" data-sveltekit-prefetch href="/noticias">General</a></li>
+			<li><a data-sveltekit-prefetch href="/noticias/estudiantes">Estudiantes</a></li>
 		</ul>
 	{/if}
 	{#if news}
