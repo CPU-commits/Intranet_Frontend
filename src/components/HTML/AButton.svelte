@@ -1,10 +1,11 @@
 <script lang="ts">
 	export let href: string
+	export let title: string = ''
 	export let prefetch = true
 </script>
 
 {#if prefetch}
-	<a {href} sveltekit:prefetch>
+	<a {title} {href} data-sveltekit-prefetch>
 		<slot />
 	</a>
 {:else}

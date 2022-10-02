@@ -1,5 +1,17 @@
 <script lang="ts">
+	import Nav from './Nav.svelte'
+
+	type Navigate = {
+		activate: boolean
+		fn?: (n: number) => void
+		max?: number
+	}
+
 	export let header: string[]
+	export let navigate: Navigate = {
+		activate: false,
+	}
+	export let total: number = 0
 </script>
 
 <section class="Table">
@@ -16,6 +28,10 @@
 		</tbody>
 	</table>
 </section>
+
+{#if navigate.activate}
+	<Nav {navigate} bind:total />
+{/if}
 
 <style>
 	.Table {

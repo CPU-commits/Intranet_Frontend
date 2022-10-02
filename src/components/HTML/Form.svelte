@@ -1,10 +1,20 @@
 <script lang="ts">
-	export let form: (...any: any) => void
+	export let form: (...any: any) => void = null
+	export let formPage: {
+		method: 'POST'
+		action: string
+	} = null
 </script>
 
-<form class="Form" on:submit|preventDefault={form}>
-	<slot />
-</form>
+{#if form}
+	<form class="Form" on:submit|preventDefault={form}>
+		<slot />
+	</form>
+{:else}
+	<form class="Form" method={formPage.method} action={formPage.action}>
+		<slot />
+	</form>
+{/if}
 
 <style>
 	.Form {

@@ -1,5 +1,16 @@
 <script lang="ts">
+	// Exports
+	export let editor: Editor = null
+	export let body: string = ''
+	export let readOnly: boolean = false
+	export let haveBackground: boolean = true
+	export let placeholder: string = 'Escribe algo...'
+	export let beforeMount: () => any = null
+	export let focusDown: () => any = null
+
+	// Svelte
 	import { onMount, onDestroy } from 'svelte'
+	// Tiptap
 	import { Editor } from '@tiptap/core'
 	import StarterKit from '@tiptap/starter-kit'
 	import CharacterCount from '@tiptap/extension-character-count'
@@ -20,22 +31,17 @@
 	import CodeBlockLowLight from '@tiptap/extension-code-block-lowlight'
 	import TextStyle from '@tiptap/extension-text-style'
 	import { Color } from '@tiptap/extension-color'
+	// Modules
 	import { lowlight } from 'lowlight'
-
+	// Components
 	import ButtonRichInput from './ButtonRichInput.svelte'
-	import { addToast } from '$stores/toasts'
 	import Modal from '$components/Modal.svelte'
 	import Form from './Form.svelte'
 	import Button from './Button.svelte'
 	import Input from './Input.svelte'
-
-	export let editor: Editor = null
-	export let body: string = ''
-	export let readOnly: boolean = false
-	export let haveBackground: boolean = true
-	export let placeholder: string = 'Escribe algo...'
-	export let beforeMount: () => any = null
-	export let focusDown: () => any = null
+	// Stores
+	import { addToast } from '$stores/toasts'
+	import { afterUpdate } from 'svelte'
 
 	let element: HTMLElement
 	let editorElement: HTMLElement
@@ -112,6 +118,9 @@
 						if (focusDown) focusDown()
 					},
 				},
+				attributes: {
+					class: !haveBackground && readOnly ? 'ProseMirrorNoBackground' : '',
+				},
 			},
 			onCreate: () => {
 				if (beforeMount) beforeMount()
@@ -128,6 +137,10 @@
 
 	onDestroy(() => {
 		if (editor) editor.destroy()
+	})
+
+	afterUpdate(() => {
+		if (body !== '') editor.commands.setContent(body)
 	})
 
 	// Image

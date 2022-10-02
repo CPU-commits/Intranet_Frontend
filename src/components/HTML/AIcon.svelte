@@ -6,12 +6,18 @@
 	export let target = ''
 </script>
 
-<a {target} sveltekit:prefetch class:Actived={active} {href} {title}> <i class={classItem} /></a>
+<a {target} data-sveltekit-prefetch class:Actived={active} {href} {title}>
+	<i class={classItem} /></a
+>
 
 <style>
 	a {
+		display: flex;
+		justify-content: center;
+		text-decoration: none;
 		background: transparent;
 		border: none;
+		width: 100%;
 	}
 
 	a:hover i {
