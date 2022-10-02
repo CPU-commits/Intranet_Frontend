@@ -1,25 +1,37 @@
 <script lang="ts">
-	export let url: string
-	export let user_type: string
-	export let token: string
+	/** @type {import('./$types').PageData} */
+	export let data: Session
 
-	import User from '$components/User/User.svelte'
+	// Types
+	import type { UserFiles } from '$models/users/files.model'
+	import type { Session } from '$models/session.model'
+	// Svelte
 	import { onMount } from 'svelte'
+	// Stores
 	import { addToast } from '$stores/toasts'
-	import API from '$utils/APIModule'
-	import { variables } from '$lib/variables'
+	import { page } from '$app/stores'
+	// Components
+	import User from '$components/User/User.svelte'
 	import Button from '$components/HTML/Button.svelte'
 	import Modal from '$components/Modal.svelte'
 	import Form from '$components/HTML/Form.svelte'
 	import InputFiles from '$components/HTML/InputFiles.svelte'
 	import Input from '$components/HTML/Input.svelte'
-	import type { UserFiles } from '$models/users/files.model'
 	import SpinnerGet from '$components/SpinnerGet.svelte'
 	import Table from '$components/HTML/Table.svelte'
+	import Select from '$components/HTML/Select.svelte'
+	// Utils
+	import API from '$utils/APIModule'
+	import { variables } from '$lib/variables'
 	import { getIcon, getTypeFile } from '$utils/getIcon'
 	import { formatDate } from '$utils/format'
 	import downloadFileURL from '$utils/downloadFileURL'
-	import Select from '$components/HTML/Select.svelte'
+
+	// Init variables
+	$: url = $page.url.pathname
+	let user_type = data.user.user_type
+	let token = data.user.token
+
 	// Modal
 	let modalFile = false
 	const toggleFile = () => (modalFile = !modalFile)

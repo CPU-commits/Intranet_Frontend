@@ -19,10 +19,11 @@
 	// Utils
 	import API from '$utils/APIModule'
 	import { variables } from '$lib/variables'
+	import type { FetchResponse } from '$models/HTTP/fetchDataResponse.model'
 
 	// Init variables
 	let token = data.user.token
-	let url = $page.url.pathname
+	$: url = $page.url.pathname
 	let user_type = data.user.user_type
 	// Data
 	let user: AnyUser
@@ -31,11 +32,9 @@
 
 	onMount(async () => {
 		try {
-			const dataFetch = await API.fetchGetData(
-				`${variables.API}/api/users/get_data`,
-				true,
-				token,
-			)
+			const dataFetch: FetchResponse<{
+				user: AnyUser
+			}> = await API.fetchGetData(`${variables.API}/api/users/get_data`, true, token)
 			user = dataFetch.body.user
 			email = user?.email
 		} catch (err) {
