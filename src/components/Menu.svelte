@@ -84,14 +84,14 @@
 				<ul>
 					{#if user?.user_type === UserTypes.TEACHER || user?.user_type === UserTypes.STUDENT || user?.user_type === UserTypes.STUDENT_DIRECTIVE}
 						<li>
-							<a href="/aula_virtual" sveltekit:prefetch> Aula virtual </a>
+							<a href="/aula_virtual" data-sveltekit-prefetch> Aula virtual </a>
 						</li>
 					{/if}
 					<li>
-						<a href="/noticias" sveltekit:prefetch> Noticias </a>
+						<a href="/noticias" data-sveltekit-prefetch> Noticias </a>
 					</li>
 					<li>
-						<a href="/biblioteca" sveltekit:prefetch> Biblioteca </a>
+						<a href="/biblioteca" data-sveltekit-prefetch> Biblioteca </a>
 					</li>
 				</ul>
 			{/if}
@@ -119,7 +119,7 @@
 				<button on:click={toggleMenu}>
 					<i class="fa-solid fa-bars" />
 				</button>
-				<a on:click={ahref} href="/" sveltekit:prefetch>
+				<a on:click={ahref} href="/" data-sveltekit-prefetch>
 					<h2>CSAH Intranet</h2>
 				</a>
 			</div>
@@ -148,11 +148,6 @@
 			<a on:click={ahref} href="/libro_vida">
 				<li class:selected={url.startsWith('/libro_vida')}>
 					<i class="fa-solid fa-book-open" /> <span>Libro de vida</span>
-				</li>
-			</a>
-			<a on:click={ahref} href="/bienestar_estudiantil">
-				<li class:selected={url.startsWith('/bienestar_estudiantil')}>
-					<i class="fa-solid fa-handshake-angle" /> <span>Bienestar estudiantil</span>
 				</li>
 			</a>
 			{#if (user?.user_type === UserTypes.STUDENT || user?.user_type === UserTypes.STUDENT_DIRECTIVE) && votingStatus === 'in progress'}
