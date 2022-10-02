@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { type AxiosError } from "axios"
 
 import { spinner } from "$stores/stores"
@@ -22,8 +23,8 @@ class APIModule {
     }
 
     private async handleAxiosError(error: AxiosError){
-        const responseJSON = error?.response?.data
-        if(error.response){
+        const responseJSON = error?.response?.data as FetchResponse<unknown>
+        if(error?.response){
             return {
                 success: false,
                 statusCode: error.response.status,
@@ -54,19 +55,18 @@ class APIModule {
             },
         },
         token?: string
-    ): Promise<FetchResponse> {
+    ): Promise<FetchResponse<any>> {
         spinner.set(spinnerStatus)
-        if (token)
-        config.headers['Authorization'] = `Bearer ${token}`
+        if (token) config.headers['Authorization'] = `Bearer ${token}`
         const response = await axios[method](URL, body, config)
-            .then((res) =>{
+            .then((res) => {
                 return res.data
             })
             .catch(async (error: Error | AxiosError) =>{
                 spinner.set(false)
                 if(axios.isAxiosError(error)){
                     return await this.handleAxiosError(error)
-                }else{
+                } else {
                     return this.handleUnexpectedError(error)
                 }
             })
@@ -85,7 +85,7 @@ class APIModule {
                 'content-type': 'application/json',
             },
         },
-    ): Promise<FetchResponse> {
+    ): Promise<FetchResponse<any>> {
         spinner.set(spinnerStatus)
         if(token)
             config.headers['Authorization'] = `Bearer ${token}`
@@ -116,7 +116,8 @@ class APIModule {
                 'content-type': 'application/json',
             },
         },
-    ): Promise<FetchResponse> {
+        maybeBlob = false,
+    ): Promise<FetchResponse<any>> {
         spinner.set(spinnerStatus)
         if(token)
             config.headers['Authorization'] = `Bearer ${token}`
@@ -133,8 +134,13 @@ class APIModule {
                 }
             })
         spinner.set(false)
-        if(response.success === false)
+        if (response.success === false)
             throw response
+        if (maybeBlob)
+            return {
+                success: true,
+                body: response,
+            }
         return response
     }
 }
