@@ -8,6 +8,7 @@ export interface Section {
     course: Course
     header_teacher: User | string
     next_section?: Section
+    is_next_section_variable: boolean
     _id: string
     file: UserFiles
 }
