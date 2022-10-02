@@ -21,7 +21,7 @@
 	// Init variables
 	let token = data.user.token
 	let user_type = data.user.user_type
-	let pathname = $page.url.pathname
+	$: pathname = $page.url.pathname
 	// Data
 	let works: Array<Work & { status: number }>
 

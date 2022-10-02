@@ -1,9 +1,11 @@
 import { variables } from '$lib/variables'
+import type { Session } from '$models/session.model'
 import API from '$utils/APIModule'
 import { error } from '@sveltejs/kit'
 
-export async function load({ session, params, url }) {
+export async function load({ parent, params, url }) {
     try {
+        const session: Session = await parent()
         const dataFetch = await API.fetchGetData(
             `${variables.API_CLASSROOM_READ}/api/classroom/modules/get_module/${params.module}`,
             false,

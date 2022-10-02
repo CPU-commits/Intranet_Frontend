@@ -20,7 +20,7 @@
 	import { timeAgo } from '$utils/format'
 
 	let token = data.user.token
-	let pathname = $page.url.pathname
+	$: pathname = $page.url.pathname
 	let user_type = data.user.user_type
 
 	// Data

@@ -2,6 +2,7 @@ import type { Session } from '$models/session.model'
 import { UserTypes } from '$models/users/user_type.model'
 import { error } from '@sveltejs/kit'
 
+/** @type {import('./$types').LayoutLoad} */
 export async function load({ parent }) {
     const session: Session = await parent()
 	if (

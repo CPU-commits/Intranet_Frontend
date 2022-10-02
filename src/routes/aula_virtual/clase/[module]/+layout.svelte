@@ -16,7 +16,7 @@
 
 	// Init variables
 	let moduleData = data.moduleData
-	let url = $page.url.pathname
+	$: url = $page.url.pathname
 	let user_type = data.user.user_type
 	let panel = data.panel
 	let token = data.user.token

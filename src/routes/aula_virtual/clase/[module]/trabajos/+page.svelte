@@ -46,7 +46,7 @@
 <section class="Works">
 	<h2>Trabajos</h2>
 	{#if user_type === UserTypes.TEACHER}
-		<a href="trabajos/nuevo_trabajo" sveltekit:prefetch>
+		<a href="trabajos/nuevo_trabajo" data-sveltekit-prefetch>
 			<i class="fa-solid fa-plus" /> Nuevo trabajo
 		</a>
 	{/if}
