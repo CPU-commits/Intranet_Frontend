@@ -9,18 +9,18 @@
 	<ul>
 		{#if user_type !== UserTypes.LIBRARIAN}
 			{#if user_type === UserTypes.DIRECTOR}
-				<a sveltekit:prefetch href="/admin/colegio">
+				<a data-sveltekit-prefetch href="/admin/colegio">
 					<li class:Selected={url === '/admin/colegio'}>
 						<i class="fa-solid fa-building-columns" /> Colegio
 					</li>
 				</a>
 			{/if}
-			<a sveltekit:prefetch href="/admin/estudiantes">
+			<a data-sveltekit-prefetch href="/admin/estudiantes">
 				<li class:Selected={url.startsWith('/admin/estudiantes')}>
 					<i class="fa-solid fa-graduation-cap" /> Estudiantes
 				</li>
 			</a>
-			<a sveltekit:prefetch href="/admin/profesores">
+			<a data-sveltekit-prefetch href="/admin/profesores">
 				<li
 					class:Selected={url === '/admin/profesores' ||
 						url === '/admin/profesores/masivo'}
@@ -29,7 +29,7 @@
 				</li>
 			</a>
 			{#if user_type === UserTypes.DIRECTOR}
-				<a sveltekit:prefetch href="/admin/directivos">
+				<a data-sveltekit-prefetch href="/admin/directivos">
 					<li
 						class:Selected={url === '/admin/directivos' ||
 							url === '/admin/directivos/masivo'}
@@ -38,39 +38,39 @@
 					</li>
 				</a>
 			{/if}
-			<a sveltekit:prefetch href="/admin/cursos">
+			<a data-sveltekit-prefetch href="/admin/cursos">
 				<li class:Selected={url === '/admin/cursos' || url.startsWith('/admin/secciones')}>
 					<i class="fa-solid fa-layer-group" /> Cursos
 				</li>
 			</a>
-			<a sveltekit:prefetch href="/admin/materias">
+			<a data-sveltekit-prefetch href="/admin/materias">
 				<li class:Selected={url === '/admin/materias'}>
 					<i class="fa-solid fa-book-bookmark" /> Materias
 				</li>
 			</a>
-			<a sveltekit:prefetch href="/admin/semestres">
-				<li class:Selected={url === '/admin/semestres'}>
+			<a data-sveltekit-prefetch href="/admin/semestres">
+				<li class:Selected={url.startsWith('/admin/semestres')}>
 					<i class="fa-solid fa-calendar-days" /> Semestres
 				</li>
 			</a>
-			<a sveltekit:prefetch href="/admin/aula_virtual">
+			<a data-sveltekit-prefetch href="/admin/aula_virtual">
 				<li class:Selected={url.startsWith('/admin/aula_virtual')}>
 					<i class="fa-solid fa-chalkboard" /> Aula Virtual
 				</li>
 			</a>
 		{/if}
-		<a sveltekit:prefetch href="/admin/biblioteca">
+		<a data-sveltekit-prefetch href="/admin/biblioteca">
 			<li class:Selected={url.startsWith('/admin/biblioteca')}>
 				<i class="fa-solid fa-book-bookmark" /> Biblioteca
 			</li>
 		</a>
 		{#if user_type !== UserTypes.LIBRARIAN}
-			<a sveltekit:prefetch href="/admin/archivado">
+			<a data-sveltekit-prefetch href="/admin/archivado">
 				<li class:Selected={url.startsWith('/admin/archivado')}>
 					<i class="fa-solid fa-box-archive" /> Archivado
 				</li>
 			</a>
-			<a sveltekit:prefetch href="/admin/historico">
+			<a data-sveltekit-prefetch href="/admin/historico">
 				<li class:Selected={url.startsWith('/admin/historico')}>
 					<i class="fa-solid fa-clock-rotate-left" /> Historico
 				</li>
