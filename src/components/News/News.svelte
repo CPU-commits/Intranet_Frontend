@@ -113,7 +113,15 @@
 			<i class:LikeAnimation={news.like} class="fa-solid fa-heart" />
 		</button>
 		<span>{news.likes}</span>
-		<span>Escrito: {news.author.name} {news.author.first_lastname}</span>
+		<span>
+			Escrito:
+			{#if news.author?.name}
+				{news.author.name}
+				{news.author.first_lastname}
+			{:else}
+				<i class="fa-solid fa-robot" /> Noticia autom&aacute;tica
+			{/if}
+		</span>
 	</footer>
 	<small>{timeAgo(news.upload_date)}</small>
 </article>

@@ -1,14 +1,26 @@
 <script lang="ts">
-	import Rich from '$components/HTML/Rich.svelte'
-
-	import type { News } from '$models/news.model'
+	// Exports
 	export let news: News
+
+	// Types
+	import type { News } from '$models/news.model'
+	// Components
+	import Rich from '$components/HTML/Rich.svelte'
 </script>
 
 <section class="News">
 	<div class="News__contain">
-		<h1>{news.title}</h1>
-		<p>{news.headline}</p>
+		<header>
+			<h1>{news.title}</h1>
+			<p>{news.headline}</p>
+			<span class="News__container--author">
+				{#if news.author?.name}
+					{news.author.name} {news.author.first_lastname}
+				{:else}
+					<i class="fa-solid fa-robot" /> Noticia autom&aacute;tica
+				{/if}
+			</span>
+		</header>
 		<img src={news.image.url} alt={news.title} />
 		<Rich haveBackground={false} readOnly={true} body={news.body} />
 	</div>
@@ -38,8 +50,11 @@
 		width: 100%;
 		max-height: 400px;
 		object-fit: cover;
-		cursor: pointer;
 		margin-bottom: 30px;
+	}
+
+	.News__contain header {
+		margin-bottom: 15px;
 	}
 
 	h1 {
@@ -54,5 +69,11 @@
 		font-size: 1rem;
 		border-bottom: 2px solid #ebebeb;
 		margin-bottom: 25px;
+	}
+
+	.News__container--author,
+	.News__container--author i {
+		color: var(--color-main);
+		font-weight: bold;
 	}
 </style>
