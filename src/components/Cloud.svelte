@@ -1,20 +1,24 @@
 <script lang="ts">
-	import { variables } from '$lib/variables'
-	import type { UserFiles } from '$models/users/files.model'
-
-	import { addToast } from '$stores/toasts'
-	import API from '$utils/APIModule'
-
-	import { onMount } from 'svelte'
-	import File from './Classroom/File.svelte'
-
-	import AIcon from './HTML/AIcon.svelte'
-	import Modal from './Modal.svelte'
-	import SpinnerGet from './SpinnerGet.svelte'
-
+	// Exports
 	export let modal = false
 	export let token: string
 	export let filesAttached: Array<UserFiles>
+
+	// Types
+	import type { UserFiles } from '$models/users/files.model'
+	// Svelte
+	import { onMount } from 'svelte'
+	// Stores
+	import { addToast } from '$stores/toasts'
+	// Components
+	import File from './Classroom/File.svelte'
+	import AIcon from './HTML/AIcon.svelte'
+	import Modal from './Modal.svelte'
+	import SpinnerGet from './SpinnerGet.svelte'
+	// Utils
+	import { variables } from '$lib/variables'
+	import API from '$utils/APIModule'
+
 	// Modal
 	const toggleModal = () => (modal = !modal)
 	// Data
