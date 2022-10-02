@@ -2,9 +2,9 @@ import { json } from '@sveltejs/kit'
 import * as cookie from 'cookie'
 
 /** @type {import('./$types').RequestHandler} */
-export async function POST(event) {
+export async function POST({ request }) {
     try {
-        const cookiesData = event.request.headers.get('cookie')
+        const cookiesData = request.headers.get('cookie')
         const cookies = cookie.parse(cookiesData || '')
         if(!cookies.token){
             return json(
