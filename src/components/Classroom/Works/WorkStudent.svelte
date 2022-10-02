@@ -173,11 +173,18 @@
 	<section class="Grade">
 		<span>Calificaci&oacute;n final: <span class="Color">{formatGrade(grade.grade)}</span></span
 		>
-		<small
-			>Calificado por: <span class="Color"
-				>{grade.evaluator.name} {grade.evaluator.first_lastname}</span
-			></small
-		>
+		<small>
+			Calificado por:
+			<span class="Color">
+				{#if grade.evaluator?.name}
+					{grade.evaluator.name}
+					{grade.evaluator.first_lastname}
+				{:else}
+					<i class="fa-solid fa-robot" />
+					Calificaci&oacute;n autom&aacute;tica
+				{/if}
+			</span>
+		</small>
 		<small>Fecha evaluaci&oacute;n: {formatDate(grade.date)}</small>
 		{#if work.type === 'files' && work.is_revised}
 			<footer class="Revise">
@@ -231,7 +238,7 @@
 	</Modal>
 {/if}
 
-<style>
+<style lang="scss">
 	.Form__Button {
 		width: fit-content;
 	}
@@ -245,6 +252,9 @@
 	.Color {
 		color: var(--color-main);
 		font-weight: bold;
+		i {
+			color: var(--color-main);
+		}
 	}
 
 	.Files {
