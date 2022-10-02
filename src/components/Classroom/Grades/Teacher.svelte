@@ -308,7 +308,7 @@
 				type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 			})
 			const url = window.URL.createObjectURL(blob)
-			downloadFileURL(url, `hola.xlsx`)
+			downloadFileURL(url, `calificaciones.xlsx`)
 		} catch (err) {
 			addToast({
 				message: err.message,
