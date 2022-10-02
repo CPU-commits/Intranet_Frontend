@@ -12,7 +12,7 @@
 	import Toasts from '$components/Toast/Toasts.svelte'
 	import Loading from '$components/Loading.svelte'
 	// Init variables
-	let url = $page.url.pathname
+	$: url = $page.url.pathname
 	let user = data.user
 	let authenticated = data.authenticated
 </script>
